@@ -5,7 +5,7 @@ import {
   ChevronUp, Globe, DollarSign, Wallet, ArrowRightLeft, 
   LogOut, Coins, Zap, Filter, Download, FileText, ChevronRight,
   Fingerprint, Key, ShieldCheck, Lock,
-  BrainCircuit, Quote, Activity, RefreshCw
+  BrainCircuit, Quote, Activity, RefreshCw, Eye, EyeOff
 } from 'lucide-react';
 import { 
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip, 
@@ -137,6 +137,7 @@ const App = () => {
   const [authMode, setAuthMode] = useState('login'); // 'login' or 'register'
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loginName, setLoginName] = useState("");
 
   const [targetCurrency, setTargetCurrency] = useState('CAD');
@@ -826,14 +827,35 @@ const App = () => {
                   />
                 </div>
                 <div>
-                  <label className="gold-label mb-2 block tracking-widest">Sovereign Key</label>
-                  <input 
-                    type="password" 
-                    className="w-full bg-black/50 border border-white/10 p-3 rounded-lg text-white focus:border-red-500 transition-all outline-none"
-                    value={loginPassword}
-                    onChange={(e) => setLoginPassword(e.target.value)}
-                    placeholder="••••••••"
-                  />
+                  <div className="flex justify-between items-end mb-2">
+                    <label className="gold-label tracking-widest block">Sovereign Key</label>
+                    {authMode === 'login' && (
+                      <button 
+                        type="button" 
+                        onClick={() => alert("Sovereign Recovery Mode initiated. Please contact your Director or use biometric override.")}
+                        className="text-[9px] text-red-500/60 hover:text-red-500 transition-colors uppercase tracking-widest"
+                      >
+                        Forgot Key?
+                      </button>
+                    )}
+                  </div>
+                  <div className="relative">
+                    <input 
+                      type={showPassword ? "text" : "password"} 
+                      className="w-full bg-black/50 border border-white/10 p-3 pr-10 rounded-lg text-white focus:border-red-500 transition-all outline-none gold-mono"
+                      value={loginPassword}
+                      onChange={(e) => setLoginPassword(e.target.value)}
+                      placeholder="••••••••"
+                    />
+                    <button 
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/70 transition-colors focus:outline-none"
+                      tabIndex={-1}
+                    >
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
                 </div>
 
                 <div className="flex gap-2">
