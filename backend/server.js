@@ -446,6 +446,85 @@ app.get('/api/receipts', authenticateToken, async (req, res) => {
 import { PROTOCOLS } from './utils/taxProtocols.js';
 import ollama from 'ollama';
 
+// ============================================
+// MANUAL RECEIPT ENTRY
+// ============================================
+app.post('/api/receipts/manual', authenticateToken, async (req, res) => {
+  const { merchant, amount, date, category, region, vault_id } = req.body;
+  if (!merchant || !amount) return res.status(400).json({ error: 'Merchant and amount are required.' });
+
+  try {
+    if (vault_id) {
+      const membership = await prisma.vaultMembership.findFirst({
+        where: { vault_id, user_id: req.user.id }
+      });
+      if (!membership || membership.role === 'AUDITOR') {
+        return res.status(403).json({ error: 'Vault clearance insufficient.' });
+      }
+    }
+
+    const protocol = PROTOCOLS[region] || PROTOCOLS.CANADA;
+    const taxes = protocol.calculate(Number(amount));
+
+    const receipt = await prisma.receipt.create({
+      data: {
+        store_name: merchant,
+        total_amount: Number(amount),
+        subtotal: taxes.subtotal,
+        tax_gst: taxes.tax_gst,
+        tax_qst_pst: taxes.tax_qst_pst,
+        tax_hst: taxes.tax_hst,
+        tax_usa: taxes.tax_usa,
+        currency: protocol.currency,
+        category: category || 'General',
+        region: region || 'CANADA',
+        receipt_date: date ? new Date(date) : new Date(),
+        user_id: req.user.id,
+        vault_id: vault_id || null,
+        items: [],
+      }
+    });
+
+    console.log(`✅ MANUAL ENTRY: ${merchant} — ${protocol.currency} ${amount}`);
+    res.json(receipt);
+  } catch (error) {
+    console.error('[MANUAL ENTRY] Error:', error);
+    res.status(500).json({ error: 'Manual entry failed.' });
+  }
+});
+
+// ============================================
+// DELETE RECEIPT — De-Authorization
+// ============================================
+app.delete('/api/receipts/:id', authenticateToken, async (req, res) => {
+  const { id } = req.params;
+  try {
+    const receipt = await prisma.receipt.findUnique({ where: { id } });
+    if (!receipt) return res.status(404).json({ error: 'Receipt not found.' });
+
+    // Only owner of receipt OR vault member can delete
+    if (receipt.user_id !== req.user.id) {
+      if (receipt.vault_id) {
+        const membership = await prisma.vaultMembership.findFirst({
+          where: { vault_id: receipt.vault_id, user_id: req.user.id }
+        });
+        if (!membership || membership.role === 'AUDITOR') {
+          return res.status(403).json({ error: 'Insufficient clearance to de-authorize.' });
+        }
+      } else {
+        return res.status(403).json({ error: 'Access denied.' });
+      }
+    }
+
+    await prisma.receipt.delete({ where: { id } });
+    console.log(`🗑️  DE-AUTHORIZED: Receipt ${id}`);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('[DELETE] Error:', error);
+    res.status(500).json({ error: 'De-authorization failed.' });
+  }
+});
+
 app.post('/api/receipts/scan', authenticateToken, async (req, res) => {
   const { imageBase64, region, vault_id } = req.body;
   if (!imageBase64) return res.status(400).json({ error: 'No image provided' });
@@ -483,7 +562,27 @@ app.post('/api/receipts/scan', authenticateToken, async (req, res) => {
       });
 
       extractedData = JSON.parse(response.response);
-      console.log("✅ LOCAL AI EXTRACTION SUCCESS:", extractedData.store_name);
+      
+      // --- COMET-STYLE SMART ROUTING ---
+      // If category is generic, perform high-level merchant mapping
+      const store = extractedData.store_name?.toLowerCase() || "";
+      const items = extractedData.items?.map(i => i.name.toLowerCase()).join(" ") || "";
+      
+      if (!extractedData.category || extractedData.category === "General" || extractedData.category === "Misc") {
+        if (store.includes("apple") || store.includes("best buy") || items.includes("phone") || items.includes("computer") || items.includes("macbook") || items.includes("ipad") || items.includes("hardware")) {
+          extractedData.category = "Technology";
+        } else if (store.includes("bell") || store.includes("rogers") || store.includes("telus") || items.includes("mobile") || items.includes("internet") || items.includes("data plan") || items.includes("roaming")) {
+          extractedData.category = "Telecommunications";
+        } else if (store.includes("amazon") || store.includes("ups") || store.includes("fedex") || items.includes("shipping") || items.includes("delivery") || items.includes("logistics")) {
+          extractedData.category = "Logistics";
+        } else if (store.includes("shell") || store.includes("petro") || store.includes("chevron") || store.includes("uber") || store.includes("lyft") || store.includes("hilton") || store.includes("marriott") || items.includes("fuel") || items.includes("hotel") || items.includes("travel")) {
+          extractedData.category = "Travel";
+        } else if (store.includes("walmart") || store.includes("costco") || store.includes("grocery") || store.includes("staples") || items.includes("supplies") || items.includes("office") || items.includes("maintenance")) {
+          extractedData.category = "Operations";
+        }
+      }
+      
+      console.log(`✅ SOVEREIGN ROUTING: ${extractedData.store_name} -> [${extractedData.category}]`);
     } catch (aiError) {
       console.warn("⚠️ Local AI failed or timed out. Falling back to protocol simulation.", aiError.message);
       // Fallback: Professional simulation if local AI is not warm or model missing
@@ -498,7 +597,7 @@ app.post('/api/receipts/scan', authenticateToken, async (req, res) => {
         tax_hst: taxes.tax_hst,
         tax_usa: taxes.tax_usa,
         currency: protocol.currency,
-        category: "System Audit",
+        category: "Operations", // Better default
         items: [{ name: "Automated Recovery Scan", price: total }]
       };
     }
@@ -617,35 +716,105 @@ app.get('/api/analytics/predictive', authenticateToken, requireSecureSession, as
   }
 });
 
+// ============================================
+// STRATEGIC COMMAND AGENT — Comet-Style reasoning
+// ============================================
+app.post('/api/agent/command', authenticateToken, async (req, res) => {
+  const { command, context } = req.body;
+  if (!command) return res.status(400).json({ error: 'No command provided' });
+
+  try {
+    const { GoogleGenerativeAI } = await import('@google/generative-ai');
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+    // Build context-aware prompt
+    const prompt = `You are the ReceiptTrac Strategic Command Agent (Comet-style). 
+    A user is interacting with their financial vault.
+    Current User: ${req.user.email}
+    Context: ${JSON.stringify(context || {})}
+    
+    User Command: "${command}"
+    
+    Process the command. If it is a question about receipts, help them. 
+    If they mention something like "cell phone to computer", explain that ReceiptTrac uses Smart Routing to categorize these as Technology.
+    
+    Return a JSON response with:
+    {
+      "reply": "Agent response string",
+      "action": "NONE|REFRESH|DETAIL",
+      "logs": [
+        {"type": "system|agent|success|error", "msg": "Internal reasoning step log"}
+      ]
+    }`;
+
+    const result = await model.generateContent(prompt);
+    let text = result.response.text();
+    text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+
+    const response = JSON.parse(text);
+    res.json(response);
+
+  } catch (error) {
+    console.error("[AGENT_ERROR]:", error);
+    res.json({
+      reply: "Strategic command failed to execute due to an internal audit breach.",
+      action: "NONE",
+      logs: [{ type: "error", msg: "AGENT_FAILURE: Connection to LLM_CORE lost." }]
+    });
+  }
+});
+
 app.post('/api/receipts/barcode', authenticateToken, async (req, res) => {
   const { barcode, region, vault_id } = req.body;
   if (!barcode) return res.status(400).json({ error: 'Barcode required' });
 
+  console.log(`📡 ReceiptTrac SmartScan: Decrypting Barcode ${barcode}...`);
+
+  // Universal Merchant Barcode Registry (Simulation)
+  const BARCODE_REGISTRY = {
+    '0001': { store: 'Starbucks Reserve', cat: 'Meals', amount: 8.75 },
+    '0002': { store: 'Apple Store', cat: 'Equipment', amount: 1299.00 },
+    '0003': { store: 'Amazon Hub', cat: 'Supplies', amount: 24.50 },
+    '0004': { store: 'Chevron Executive', cat: 'Travel', amount: 85.20 },
+    '0005': { store: 'Hilton Vault', cat: 'Travel', amount: 450.00 },
+    '0006': { store: 'Uber Black', cat: 'Travel', amount: 65.00 }
+  };
+
   try {
-    // Generate a mock receipt from barcode
+    const protocol = PROTOCOLS[region] || PROTOCOLS.CANADA;
+    const lookupKey = barcode.substring(0, 4);
+    const mockInfo = BARCODE_REGISTRY[lookupKey] || {
+      store: `Jurisdictional Entity #${barcode.substring(0, 4)}`,
+      cat: 'Sovereign Expense',
+      amount: 50.00 + (Math.random() * 100)
+    };
+
+    const taxes = protocol.calculate(mockInfo.amount);
+
     const newReceipt = await prisma.receipt.create({
       data: {
         user_id: req.user.id,
         vault_id: vault_id || null,
         region: region || 'CAN_ON',
-        store_name: `Barcode Store #${barcode.substring(0, 4)}`,
-        category: 'Supplies',
-        currency: region === 'USA' ? 'USD' : 'CAD',
-        subtotal: 45.00,
-        tax_gst: 2.25,
-        tax_qst_pst: 0,
-        tax_hst: 0,
-        tax_usa: region === 'USA' ? 3.50 : 0,
-        total_amount: region === 'USA' ? 48.50 : 47.25,
-        raw_text: `Mock parsed from barcode: ${barcode}`,
+        store_name: mockInfo.store,
+        category: mockInfo.cat,
+        currency: protocol.currency,
+        subtotal: taxes.subtotal,
+        tax_gst: taxes.tax_gst,
+        tax_qst_pst: taxes.tax_qst_pst,
+        tax_hst: taxes.tax_hst,
+        tax_usa: taxes.tax_usa,
+        total_amount: mockInfo.amount,
+        raw_text: `ReceiptTrac SmartScan Decryption: ${barcode}`,
         image_url: null
       }
     });
 
     res.json(newReceipt);
   } catch (err) {
-    console.error('Barcode error', err);
-    res.status(500).json({ error: 'Failed to process barcode' });
+    console.error('Barcode protocol breach:', err);
+    res.status(500).json({ error: 'Failed to process jurisdictional barcode' });
   }
 });
 
@@ -727,13 +896,13 @@ app.get('/api/receipts/export', authenticateToken, async (req, res) => {
       }
     }
 
-    const sheetName = region ? `LuxeBill_${region}` : 'LuxeBill_All';
+    const sheetName = region ? `ReceiptTrac_${region}` : 'ReceiptTrac_All';
     XLSX.utils.book_append_sheet(wb, ws, sheetName);
 
     // Write to buffer
     const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
     
-    const filename = `LuxeBill_${region || 'ALL'}_${new Date().toISOString().split('T')[0]}.xlsx`;
+    const filename = `ReceiptTrac_${region || 'ALL'}_${new Date().toISOString().split('T')[0]}.xlsx`;
     
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);

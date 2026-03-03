@@ -1,5 +1,5 @@
 /**
- * LUXEBILL JURISDICTIONAL PROTOCOLS
+ * RECEIPTTRAC JURISDICTIONAL PROTOCOLS
  * Precision tax calculation engines for diverse regions.
  */
 

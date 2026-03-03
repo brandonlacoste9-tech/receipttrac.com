@@ -23,6 +23,7 @@
     "express-session": "^1.19.0",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.3",
+    "node-telegram-bot-api": "^0.67.0",
     "ollama": "^0.6.3",
     "pg": "^8.19.0",
     "prisma": "^7.4.2",

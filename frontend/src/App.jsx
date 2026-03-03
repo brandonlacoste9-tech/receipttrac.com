@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Plus, Camera, Receipt, PieChart as PieIcon, BarChart3, 
   TrendingUp, Table, LayoutGrid, Search, ChevronDown, 
@@ -23,11 +23,11 @@ const DeepInsightCard = ({ insight, loading, onRefresh, t }) => {
     return (
       <motion.div 
         initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-        className="leather-card p-6 border-gold/30 relative overflow-hidden h-full flex flex-col justify-center items-center min-h-[300px]"
+        className="leather-card p-6 border-red-500/30 relative overflow-hidden h-full flex flex-col justify-center items-center min-h-[300px]"
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-gold/5 to-transparent pointer-events-none" />
-        <Zap className="w-12 h-12 text-gold animate-pulse mb-4" />
-        <h3 className="text-gold font-bold tracking-[0.2em] text-xs uppercase">{t('SYSTEM ANALYSIS IN PROGRESS')}...</h3>
+        <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent pointer-events-none" />
+        <Zap className="w-12 h-12 text-red-500 animate-pulse mb-4" />
+        <h3 className="text-red-500 font-bold tracking-[0.2em] text-xs uppercase">{t('SYSTEM ANALYSIS IN PROGRESS')}...</h3>
       </motion.div>
     );
   }
@@ -37,17 +37,17 @@ const DeepInsightCard = ({ insight, loading, onRefresh, t }) => {
   return (
     <motion.div 
       initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
-      className="leather-card p-6 border-gold/40 relative overflow-hidden"
+      className="leather-card p-6 border-red-500/40 relative overflow-hidden"
     >
       <div className="absolute top-0 right-0 p-4">
-        <button onClick={onRefresh} className="text-gold/30 hover:text-gold transition-colors">
+        <button onClick={onRefresh} className="text-red-500/30 hover:text-red-500 transition-colors">
           <RefreshCw className="w-4 h-4" />
         </button>
       </div>
 
       <div className="flex items-center gap-3 mb-6">
-        <div className="p-2 bg-gold/10 rounded-lg border border-gold/20">
-          <BrainCircuit className="w-6 h-6 text-gold" />
+        <div className="p-2 bg-red-500/10 rounded-lg border border-red-500/20">
+          <BrainCircuit className="w-6 h-6 text-red-500" />
         </div>
         <div>
           <h2 className="text-lg font-bold text-white tracking-tight uppercase leading-none mb-1">{t('DEEP_INSIGHT')}</h2>
@@ -58,11 +58,11 @@ const DeepInsightCard = ({ insight, loading, onRefresh, t }) => {
         </div>
       </div>
 
-      <p className="text-[11px] text-gray-400 mb-6 italic border-l-2 border-gold/30 pl-4 py-1 leading-relaxed">{insight.summary}</p>
+      <p className="text-[11px] text-gray-400 mb-6 italic border-l-2 border-red-500/30 pl-4 py-1 leading-relaxed">{insight.summary}</p>
 
       <div className="grid grid-cols-1 gap-6 mb-6">
         <div>
-          <h3 className="text-[9px] font-bold text-gold/50 uppercase tracking-[0.3em] mb-4 flex items-center gap-2 border-b border-gold/10 pb-2">
+          <h3 className="text-[9px] font-bold text-red-500/50 uppercase tracking-[0.3em] mb-4 flex items-center gap-2 border-b border-red-500/10 pb-2">
             <TrendingUp className="w-3 h-3" /> {t('QUARTERLY_PROJECTION')}
           </h3>
           <div className="h-[100px] w-full">
@@ -70,22 +70,22 @@ const DeepInsightCard = ({ insight, loading, onRefresh, t }) => {
               <BarChart data={insight.projections}>
                 <XAxis dataKey="month" hide />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: '#0a0a0a', border: '1px solid rgba(212, 175, 55, 0.2)', color: '#D4AF37', fontSize: '10px' }}
-                  itemStyle={{ color: '#D4AF37' }}
-                  cursor={{ fill: 'rgba(212, 175, 55, 0.05)' }}
+                  contentStyle={{ backgroundColor: '#0a0a0a', border: '1px solid rgba(255, 40, 0, 0.2)', color: '#ff2800', fontSize: '10px' }}
+                  itemStyle={{ color: '#ff2800' }}
+                  cursor={{ fill: 'rgba(255, 40, 0, 0.05)' }}
                 />
-                <Bar dataKey="estimated_liability" fill="#D4AF37" radius={[2, 2, 0, 0]} opacity={0.6} />
+                <Bar dataKey="estimated_liability" fill="#ff2800" radius={[2, 2, 0, 0]} opacity={0.6} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
         <div>
-          <h3 className="text-[9px] font-bold text-gold/50 uppercase tracking-[0.3em] mb-4 flex items-center gap-2 border-b border-gold/10 pb-2">
+          <h3 className="text-[9px] font-bold text-red-500/50 uppercase tracking-[0.3em] mb-4 flex items-center gap-2 border-b border-red-500/10 pb-2">
             <Zap className="w-3 h-3" /> {t('AI_ADVISORY')}
           </h3>
           <div className="bg-white/[0.02] border border-white/5 p-4 rounded-sm relative overflow-hidden">
-             <div className="absolute top-0 left-0 w-1 h-full bg-gold/20" />
+             <div className="absolute top-0 left-0 w-1 h-full bg-red-500/20" />
             <Quote className="absolute -top-1 -right-1 w-6 h-6 text-white/[0.03]" />
             <p className="text-[11px] text-white/80 leading-relaxed mb-4">{insight.ai_advisory}</p>
             <div className="flex justify-between items-center pt-3 border-t border-white/5">
@@ -148,6 +148,13 @@ const App = () => {
 
   const [vaults, setVaults] = useState([]);
   const [currentVault, setCurrentVault] = useState(null); // null = Personal Vault
+  const [commandInput, setCommandInput] = useState("");
+  const [commandLogs, setCommandLogs] = useState([
+    { type: 'sys', msg: 'INITIALIZING SOVEREIGN_CORE v2.5...' },
+    { type: 'sys', msg: 'ESTABLISHING SECURE JURISDICTIONAL LINK...' },
+    { type: 'ready', msg: 'STRATEGIC_AGENT ACTIVE. AWAITING COMMAND.' }
+  ]);
+  const [isAgentWorking, setIsAgentWorking] = useState(false);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
   const [inviteEmail, setInviteEmail] = useState("");
   const [newVaultName, setNewVaultName] = useState("");
@@ -155,6 +162,22 @@ const App = () => {
 
   const [deepInsight, setDeepInsight] = useState(null);
   const [isInsightLoading, setIsInsightLoading] = useState(false);
+  const terminalEndRef = useRef(null);
+
+  // Manual Entry State
+  const [isManualEntryOpen, setIsManualEntryOpen] = useState(false);
+  const [manualMerchant, setManualMerchant] = useState('');
+  const [manualAmount, setManualAmount] = useState('');
+  const [manualDate, setManualDate] = useState('');
+  const [manualCategory, setManualCategory] = useState('General');
+
+  // Category Filter State
+  const [activeCategory, setActiveCategory] = useState(null);
+
+  useEffect(() => {
+    terminalEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [commandLogs]);
+
 
   // Simulate High-Frequency Arbitrage Data
   useEffect(() => {
@@ -231,10 +254,10 @@ const App = () => {
           handleLogout();
         }
       } else {
-        const savedRegion = localStorage.getItem('luxebill_region');
-        const savedUser = localStorage.getItem('luxebill_user');
-        const savedRole = localStorage.getItem('luxebill_role');
-        const savedCountry = localStorage.getItem('luxebill_country');
+        const savedRegion = localStorage.getItem('receipttrac_region');
+        const savedUser = localStorage.getItem('receipttrac_user');
+        const savedRole = localStorage.getItem('receipttrac_role');
+        const savedCountry = localStorage.getItem('receipttrac_country');
         if (savedRegion && savedUser && savedRole) {
           setRegion(savedRegion);
           setUser(JSON.parse(savedUser));
@@ -247,16 +270,6 @@ const App = () => {
     fetchVaults();
   }, [token]);
 
-  const fetchVaults = async () => {
-    if (!token) return;
-    try {
-      const res = await api.get('/api/vaults');
-      setVaults(res.data);
-    } catch (err) {
-      console.error('Failed to fetch vaults');
-    }
-  };
-
   const fetchReceipts = async () => {
     try {
       const url = currentVault ? `/api/receipts?vault_id=${currentVault.id}` : '/api/receipts';
@@ -264,6 +277,28 @@ const App = () => {
       setReceipts(res.data);
     } catch (err) {
       console.error('Failed to fetch receipts');
+    }
+  };
+
+  const fetchVaults = async () => {
+    if (!token) return;
+    try {
+      const res = await api.get('/api/vaults');
+      setVaults(res.data);
+    } catch (err) {
+      console.error('Failed to fetch vaults:', err);
+    }
+  };
+
+  const handleDeleteReceipt = async (id, e) => {
+    e.stopPropagation();
+    if (!confirm('De-authorize this receipt from the vault?')) return;
+    try {
+      await api.delete(`/api/receipts/${id}`);
+      setReceipts(prev => prev.filter(r => r.id !== id));
+      if (selectedReceipt === id) setSelectedReceipt(null);
+    } catch (err) {
+      console.error('Delete failed:', err);
     }
   };
 
@@ -305,10 +340,10 @@ const App = () => {
       
       if (newUser) {
         setUser(newUser);
-        localStorage.setItem('luxebill_user', JSON.stringify(newUser));
+        localStorage.setItem('receipttrac_user', JSON.stringify(newUser));
         if (newUser.region) {
           setRegion(newUser.region);
-          localStorage.setItem('luxebill_region', newUser.region);
+          localStorage.setItem('receipttrac_region', newUser.region);
         }
       }
     } catch (err) {
@@ -403,17 +438,17 @@ const App = () => {
     setRegion(selectedRegion);
     setRole(selectedRole);
     setUser(updatedUser);
-    localStorage.setItem('luxebill_region', selectedRegion);
-    localStorage.setItem('luxebill_user', JSON.stringify(updatedUser));
-    localStorage.setItem('luxebill_role', selectedRole);
-    localStorage.setItem('luxebill_country', country);
+    localStorage.setItem('receipttrac_region', selectedRegion);
+    localStorage.setItem('receipttrac_user', JSON.stringify(updatedUser));
+    localStorage.setItem('receipttrac_role', selectedRole);
+    localStorage.setItem('receipttrac_country', country);
   };
 
   const resetTerritory = () => {
     setCountry(null);
     setRegion(null);
-    localStorage.removeItem('luxebill_country');
-    localStorage.removeItem('luxebill_region');
+    localStorage.removeItem('receipttrac_country');
+    localStorage.removeItem('receipttrac_region');
   };
 
   const handleLogout = () => {
@@ -434,6 +469,13 @@ const App = () => {
       setPreview(reader.result);
       setIsScanning(true);
       
+      // COMET-STYLE LOGS
+      setCommandLogs(prev => [
+        ...prev,
+        { type: 'sys', msg: 'INITIATING PHYSICAL ASSET DECRYPTION...' },
+        { type: 'agent', msg: 'LLM_NODE: ANALYZING OPTICAL DATA STRUCTURES...' }
+      ]);
+      
       try {
         const res = await api.post('/api/receipts/scan', { 
           imageBase64: reader.result,
@@ -447,12 +489,20 @@ const App = () => {
           setRecentlyScannedId(res.data.id);
           setShowFlash(true);
           setIsScanning(false);
+          
+          setCommandLogs(prev => [
+            ...prev,
+            { type: 'agent', msg: `SMART_ROUTING: ${res.data.store_name} identified.` },
+            { type: 'success', msg: `ASSET_SECURED: Routed to ${res.data.category.toUpperCase()} Vault.` }
+          ]);
+
           setTimeout(() => setShowFlash(false), 500);
           setTimeout(() => setRecentlyScannedId(null), 5000);
         }, 3000);
       } catch (err) {
         console.error(err);
         setIsScanning(false);
+        setCommandLogs(prev => [...prev, { type: 'sys', msg: 'ERROR: DECRYPTION BREACH.' }]);
       }
     };
     reader.readAsDataURL(file);
@@ -461,6 +511,13 @@ const App = () => {
   const handleBarcodeScan = async (barcode) => {
     setIsScanningBarcode(false);
     setIsScanning(true);
+
+    setCommandLogs(prev => [
+      ...prev,
+      { type: 'sys', msg: `INTERCEPTING BARCODE: ${barcode}...` },
+      { type: 'agent', msg: 'QUERYING GLOBAL MERCHANT REGISTRY...' }
+    ]);
+
     try {
       const res = await api.post('/api/receipts/barcode', { 
         barcode,
@@ -472,12 +529,20 @@ const App = () => {
         setRecentlyScannedId(res.data.id);
         setShowFlash(true);
         setIsScanning(false);
+
+        setCommandLogs(prev => [
+          ...prev,
+          { type: 'agent', msg: `REGISTRY_MATCH: ${res.data.store_name} confirmed.` },
+          { type: 'success', msg: `ROUTING COMPLETE: Filed under ${res.data.category.toUpperCase()}.` }
+        ]);
+
         setTimeout(() => setShowFlash(false), 500);
         setTimeout(() => setRecentlyScannedId(null), 5000);
       }, 1000);
     } catch (err) {
       console.error(err);
       setIsScanning(false);
+      setCommandLogs(prev => [...prev, { type: 'sys', msg: 'ERROR: BARCODE UNRECOGNIZED.' }]);
     }
   };
 
@@ -493,34 +558,85 @@ const App = () => {
         region: region,
         vault_id: currentVault?.id
       });
-      setTimeout(() => {
-        setReceipts(prev => [res.data, ...prev]);
-        setRecentlyScannedId(res.data.id);
-        setShowFlash(true);
-        setIsScanning(false);
-        setManualMerchant('');
-        setManualAmount('');
-        setManualDate('');
-        setManualCategory('');
-        setIsManualEntryOpen(false);
-        setTimeout(() => setShowFlash(false), 500);
-        setTimeout(() => setRecentlyScannedId(null), 5000);
-      }, 1000);
+      setReceipts(prev => [res.data, ...prev]);
+      setRecentlyScannedId(res.data.id);
+      setShowFlash(true);
+      setIsScanning(false);
+      setManualMerchant('');
+      setManualAmount('');
+      setManualDate(new Date().toISOString().split('T')[0]);
+      setManualCategory('General');
+      setIsManualEntryOpen(false);
+      setCommandLogs(prev => [
+        ...prev,
+        { type: 'success', msg: `MANUAL_ENTRY: ${manualMerchant} archived at $${manualAmount}.` }
+      ]);
+      setTimeout(() => setShowFlash(false), 500);
+      setTimeout(() => setRecentlyScannedId(null), 5000);
     } catch (err) {
       console.error(err);
       setIsScanning(false);
     }
   };
 
-  // 🏛️ EXECUTIVE ENTRANCE (LANDING + AUTH)
+  const executeStrategicCommand = async (e) => {
+    e.preventDefault();
+    if (!commandInput.trim() || isAgentWorking) return;
+
+    const cmd = commandInput;
+    setCommandInput("");
+    setCommandLogs(prev => [...prev, { type: 'user', msg: cmd }]);
+    setIsAgentWorking(true);
+
+    // Auto-scroll terminal (handled by useEffect or similar)
+    
+    try {
+      const res = await api.post('/api/agent/command', {
+        command: cmd,
+        context: {
+          region,
+          role,
+          vault: currentVault?.name || 'Personal',
+          receiptCount: receipts.length,
+          totalValue: receipts.reduce((a, r) => a + Number(r.total_amount), 0)
+        }
+      });
+
+      const { reply, logs, action } = res.data;
+
+      // Add reasoning logs with slight delay for "Comet" feel
+      if (logs && logs.length > 0) {
+        for (const log of logs) {
+          await new Promise(r => setTimeout(r, 400));
+          setCommandLogs(prev => [...prev, log]);
+        }
+      }
+
+      setCommandLogs(prev => [...prev, { type: 'ready', msg: reply }]);
+      
+      if (action === 'REFRESH') fetchReceipts();
+      if (action === 'DETAIL' && receipts.length > 0) setSelectedReceipt(receipts[0]);
+
+    } catch (err) {
+      console.error(err);
+      setCommandLogs(prev => [...prev, { type: 'error', msg: 'COMMAND_ABORTED: NEURAL_LINK_ESTABLISHMENT_FAILURE' }]);
+    } finally {
+      setIsAgentWorking(false);
+    }
+  };
+
   if (!token) {
     if (!showLogin) {
       return (
-        <div className="min-h-screen bg-[#050505] text-white overflow-x-hidden">
+        <div className="min-h-screen bg-[#050505] relative text-white overflow-x-hidden">
+          {/* Deep ambient glow behind everything */}
+          <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-gold/5 blur-[120px] rounded-full pointer-events-none" />
+          <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-gold/5 blur-[150px] rounded-full pointer-events-none" />
+          
           {/* Navigation Bar */}
-          <nav className="fixed top-0 left-0 right-0 p-8 flex justify-between items-center z-50 bg-gradient-to-b from-black to-transparent backdrop-blur-sm">
+          <nav className="fixed top-0 left-0 right-0 p-8 flex justify-between items-center z-50 bg-gradient-to-b from-black/80 to-transparent backdrop-blur-md">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center font-bold text-gold text-[10px] tracking-tighter">FL</div>
+              <div className="w-8 h-8 bg-gold/10 border border-gold/40 shadow-[0_0_15px_rgba(255,40,0,0.2)] rounded-full flex items-center justify-center font-bold text-gold text-[10px] tracking-tighter">RT</div>
               <span className="gold-text tracking-[0.3em] text-xs italic uppercase">ReceiptTrac</span>
             </div>
             <button 
@@ -541,7 +657,7 @@ const App = () => {
             >
               <div className="logo-vault mx-auto mb-12 transform scale-125">
                 <div className="logo-spine" />
-                <span className="logo-letter">F</span>
+                <span className="logo-letter">R</span>
               </div>
               <h1 className="text-8xl md:text-[10rem] font-bold gold-foil tracking-tighter mb-4" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
                 ReceiptTrac
@@ -561,7 +677,7 @@ const App = () => {
                 className="btn-gold px-12 py-5 flex items-center gap-3 mx-auto"
               >
                 <Zap size={20} />
-                INITIATE VAULT ENTRY
+                INITIATE SECURE ENTRY
               </button>
             </motion.div>
 
@@ -631,8 +747,8 @@ const App = () => {
                  { icon: Fingerprint, label: "FIDO2 BIOMETRICS" }
                ].map((badge, i) => (
                  <div key={i} className="flex flex-col items-center gap-4 text-center group">
-                   <div className="p-3 bg-gold/5 rounded-full border border-gold/10 group-hover:border-gold/40 transition-colors">
-                     <badge.icon size={22} className="text-gold" />
+                   <div className="p-3 bg-red-500/5 rounded-full border border-red-500/10 group-hover:border-red-500/40 transition-colors">
+                     <badge.icon size={22} className="text-red-500" />
                    </div>
                    <span className="text-[9px] tracking-[0.4em] gold-label font-bold whitespace-nowrap">{badge.label}</span>
                  </div>
@@ -644,14 +760,14 @@ const App = () => {
           <footer className="p-16 text-center border-t border-white/5 relative overflow-hidden">
             <div className="logo-vault mx-auto mb-6 scale-50 opacity-20">
                 <div className="logo-spine" />
-                <span className="logo-letter">F</span>
+                <span className="logo-letter">R</span>
             </div>
             <p className="text-[10px] gold-label opacity-20 tracking-[0.5em] mb-4">ReceiptTrac ARCHIVES • SOVEREIGN JURISDICTION</p>
             <p className="text-[8px] italic opacity-10">Established 2026 • Designed for Continuous Oversight</p>
             
             {/* Subtle Signature Accent */}
             <div className="mt-12 opacity-[0.03] pointer-events-none select-none">
-               <span className="text-6xl font-serif text-gold" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Lacoste Executive</span>
+               <span className="text-6xl font-serif text-red-500" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Lacoste Executive</span>
             </div>
           </footer>
         </div>
@@ -660,6 +776,8 @@ const App = () => {
 
     return (
       <div className="min-h-screen flex items-center justify-center p-4 bg-[#050505] relative overflow-hidden">
+        {/* Soft immersive glow */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,40,0,0.06)_0%,_transparent_50%)] pointer-events-none" />
         {/* Navigation Back */}
         <button 
           onClick={() => setShowLogin(false)}
@@ -674,10 +792,10 @@ const App = () => {
           animate={{ opacity: 1, y: 0 }}
           className="max-w-md w-full relative z-10"
         >
-          <div className="text-center mb-12">
-             <div className="logo-vault mx-auto mb-6">
+          <div className="text-center mb-12 relative z-10">
+             <div className="logo-vault mx-auto mb-6 transform scale-110">
                 <div className="logo-spine" />
-                <span className="logo-letter">F</span>
+                <span className="logo-letter">R</span>
              </div>
              <h1 className="text-5xl font-bold gold-foil mb-2 tracking-tighter" style={{ fontFamily: "'Cormorant Garamond', serif" }}>ReceiptTrac</h1>
              <p className="gold-label opacity-60">Vault Access Required</p>
@@ -687,10 +805,10 @@ const App = () => {
              <form onSubmit={handleAuth} className="space-y-6 relative z-10">
                 {authMode === 'register' && (
                   <div>
-                    <label className="gold-label mb-2 block">Full Name</label>
+                    <label className="gold-label mb-2 block tracking-widest">Full Name</label>
                     <input 
                       type="text" 
-                      className="w-full bg-black/40 border border-white/10 p-3 rounded text-white focus:border-gold/50 transition-colors"
+                      className="w-full bg-black/50 border border-white/10 p-3 rounded-lg text-white focus:border-red-500 transition-all outline-none"
                       value={loginName}
                       onChange={(e) => setLoginName(e.target.value)}
                       placeholder="e.g. Corporate Executive"
@@ -698,20 +816,20 @@ const App = () => {
                   </div>
                 )}
                 <div>
-                  <label className="gold-label mb-2 block">Email Address</label>
+                  <label className="gold-label mb-2 block tracking-widest">Email Address</label>
                   <input 
                     type="email" 
-                    className="w-full bg-black/40 border border-white/10 p-3 rounded text-white focus:border-gold/50 transition-colors"
+                    className="w-full bg-black/50 border border-white/10 p-3 rounded-lg text-white focus:border-red-500 transition-all outline-none"
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
                     placeholder="executive@receipttrac.com"
                   />
                 </div>
                 <div>
-                  <label className="gold-label mb-2 block">Sovereign Key</label>
+                  <label className="gold-label mb-2 block tracking-widest">Sovereign Key</label>
                   <input 
                     type="password" 
-                    className="w-full bg-black/40 border border-white/10 p-3 rounded text-white focus:border-gold/50 transition-colors"
+                    className="w-full bg-black/50 border border-white/10 p-3 rounded-lg text-white focus:border-red-500 transition-all outline-none"
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
                     placeholder="••••••••"
@@ -932,11 +1050,13 @@ const App = () => {
   }
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      className="min-h-screen p-8 max-w-7xl mx-auto relative overflow-hidden"
-    >
+    <div className="min-h-screen bg-[#050505] relative overflow-hidden">
+      <div className="vault-grid" />
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="p-8 max-w-7xl mx-auto relative z-10"
+      >
       {/* Sovereign Laser Scan Overlay */}
       <AnimatePresence>
         {isScanning && (
@@ -945,7 +1065,7 @@ const App = () => {
             animate={{ top: '100%' }}
             exit={{ opacity: 0 }}
             transition={{ duration: 3, ease: "linear", repeat: Infinity }}
-            className="fixed left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-gold to-transparent shadow-[0_0_20px_#D4AF37] z-[100] pointer-events-none"
+            className="fixed left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-red-500 to-transparent shadow-[0_0_20px_rgba(255,40,0,1)] z-[100] pointer-events-none"
           />
         )}
       </AnimatePresence>
@@ -959,7 +1079,7 @@ const App = () => {
             className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[90] flex items-center justify-center pointer-events-none"
           >
             <div className="text-center">
-              <Zap className="text-gold mx-auto mb-4 animate-pulse" size={48} />
+              <Zap className="text-red-500 mx-auto mb-4 animate-pulse drop-shadow-[0_0_15px_rgba(255,40,0,0.8)]" size={48} />
               <h2 className="text-2xl font-black gold-text tracking-[.5em] uppercase" style={{ fontFamily: "'Playfair Display', serif" }}>Local AI Auditing...</h2>
               <p className="gold-label mt-2 opacity-50 tracking-widest">SOVEREIGNTY MODE ACTIVE</p>
             </div>
@@ -969,8 +1089,8 @@ const App = () => {
       {/* Header */}
       <header className="p-8 border-b border-gold/10 flex justify-between items-center bg-black/40 backdrop-blur-xl sticky top-0 z-50">
         <div className="flex items-center gap-6">
-          <div className="p-3 bg-gradient-to-br from-gold to-yellow-600 rounded-full shadow-lg shadow-gold/20">
-            <Coins className="text-black" size={32} />
+          <div className="p-3 bg-gradient-to-br from-red-600 to-red-900 rounded-full shadow-[0_0_20px_rgba(255,40,0,0.4)] border border-red-500/30">
+            <Coins className="text-white" size={32} />
           </div>
           <div>
             <h1 className="text-4xl font-black tracking-[0.3em] gold-text italic" style={{ fontFamily: "'Playfair Display', serif" }}>ReceiptTrac</h1>
@@ -994,13 +1114,13 @@ const App = () => {
             onClick={toggleLanguage}
             className="flex items-center gap-2 p-3 leather-card border-none hover:bg-white/5 transition-all group"
           >
-            <Globe size={16} className={`text-gold transition-all ${i18n.language === 'fr' ? 'rotate-180' : ''}`} />
+            <Globe size={16} className={`text-red-500 transition-all ${i18n.language === 'fr' ? 'rotate-180' : ''}`} />
             <span className="gold-label text-[10px] tracking-[0.2em] font-bold">{i18n.language.toUpperCase()}</span>
           </button>
 
           <div className="flex items-center gap-3 p-3 leather-card border-none hover:bg-white/5 transition-all group relative">
             <div className="flex items-center gap-2">
-              <ShieldCheck size={14} className={`${user?.is_secure ? 'text-gold' : 'text-white/20'} opacity-60 group-hover:opacity-100 transition-all`} />
+              <ShieldCheck size={14} className={`${user?.is_secure ? 'text-red-500' : 'text-white/20'} opacity-60 group-hover:opacity-100 transition-all drop-shadow-[0_0_8px_rgba(255,40,0,0.4)]`} />
               <div className="flex flex-col">
                 <span className="text-[7px] gold-label opacity-30 uppercase tracking-widest leading-tight">
                   {user?.is_secure ? 'SOVEREIGN GUARD ACTIVE' : 'PROTECTION IDLE'}
@@ -1028,7 +1148,7 @@ const App = () => {
                   {vaults.map(v => (
                     <option key={v.id} value={v.id} className="bg-[#0a0a0a]">{v.name}</option>
                   ))}
-                  <option value="new" className="bg-[#0a0a0a] text-gold/60 italic">+ {t('CREATE_VAULT')}</option>
+                  <option value="new" className="bg-[#0a0a0a] text-red-500/60 italic">+ {t('CREATE_VAULT')}</option>
                 </select>
               </div>
             </div>
@@ -1036,7 +1156,7 @@ const App = () => {
           
           <div className="flex items-center gap-3 p-3 leather-card border-none hover:bg-white/5 transition-all group relative">
             <div className="flex items-center gap-2">
-              <ArrowRightLeft size={14} className="text-gold opacity-60 group-hover:opacity-100 transition-all" />
+              <ArrowRightLeft size={14} className="text-red-500 opacity-60 group-hover:opacity-100 transition-all" />
               <div className="flex flex-col">
                 <span className="text-[7px] gold-label opacity-30 uppercase tracking-widest leading-tight">{t('ASSET CURRENCY')}</span>
                 <select 
@@ -1053,7 +1173,7 @@ const App = () => {
             <div className="flex flex-col border-l border-white/5 pl-3">
                <span className="text-[7px] gold-label opacity-30 uppercase tracking-widest leading-tight">{t('LIVE RATES')}</span>
                <div className="flex items-center gap-2">
-                 <span className="text-[9px] gold-mono text-gold/60">
+                 <span className="text-[9px] gold-mono text-red-500/60">
                    {targetCurrency === 'CAD' ? `USD: ${(1/exchangeRates.USD).toFixed(3)}` : `CAD: ${(exchangeRates[targetCurrency] || 1).toFixed(3)}`}
                  </span>
                  <div className="w-1 h-1 bg-green-500 rounded-full animate-pulse shadow-[0_0_5px_rgba(34,197,94,0.5)]" />
@@ -1064,19 +1184,20 @@ const App = () => {
             {t('LEVEL')}: {role} • {region}
           </span>
           <p className="gold-label opacity-60 flex items-center gap-2">
-            <span className="w-2 h-2 bg-gold/50 rounded-full gold-pulse" /> 
+            <span className="w-2 h-2 bg-red-500/50 rounded-full gold-pulse" /> 
             {t('AUTHENTICATED')}: <span className="gold-text font-bold uppercase">{user?.name}</span>
           </p>
         </div>
 
         <div className="flex gap-4">
           <button onClick={handleLogout} className="p-3 leather-card hover:bg-white/5 transition-colors border-none shadow-none group">
-            <LogOut size={18} className="text-gold opacity-40 group-hover:opacity-100 transition-all" />
+            <LogOut size={18} className="text-red-500 opacity-40 group-hover:opacity-100 transition-all" />
           </button>
-          <button className="gold-hardware flex items-center gap-2 px-8 py-3 rounded-none overflow-hidden relative shadow-[0_0_20px_rgba(212,175,55,0.2)]">
+          <label htmlFor="receipt-upload-header" className="gold-hardware flex items-center gap-2 px-8 py-3 rounded-none overflow-hidden relative shadow-[0_0_20px_rgba(212,175,55,0.2)] cursor-pointer">
              <div className="absolute inset-0 bg-white/10 opacity-0 hover:opacity-100 transition-opacity" />
+            <input type="file" accept="image/*" id="receipt-upload-header" className="hidden" onChange={handleFileUpload} />
             <Zap size={16} strokeWidth={3} className="text-black fill-black" /> <span className="text-[10px] tracking-[0.2em] font-bold text-black">{t('DEPOSIT VOUCHER')}</span>
-          </button>
+          </label>
         </div>
       </header>
 
@@ -1086,16 +1207,16 @@ const App = () => {
         animate={{ opacity: 1, y: 0 }}
         className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12"
       >
-        <div className="leather-card p-6 border-b-2 border-b-gold/20">
+        <div className="leather-card p-6 border-b-2 border-b-red-500/30">
           <p className="gold-label text-[10px] opacity-40 mb-1">{t('FISCAL VOLUME')}</p>
-          <div className="flex items-end gap-2">
+          <div className="flex items-end gap-2 text-red-500">
             <span className="text-3xl font-bold gold-text leading-none">{receipts.length}</span>
             <span className="gold-label text-[10px] mb-1">{t('VOUCHERS')}</span>
           </div>
         </div>
-        <div className="leather-card p-6 border-b-2 border-b-gold/20">
+        <div className="leather-card p-6 border-b-2 border-b-red-500/30">
           <p className="gold-label text-[10px] opacity-40 mb-1">{t('FISCAL AGGREGATE')}</p>
-          <div className="flex items-end gap-2">
+          <div className="flex items-end gap-2 text-red-500">
             <span className="text-3xl font-bold gold-text leading-none">
               {new Intl.NumberFormat(undefined, { style: 'currency', currency: targetCurrency }).format(
                 receipts.reduce((a, r) => a + convertAmount(Number(r.total_amount) || 0, r.currency || (r.region === 'USA' ? 'USD' : 'CAD')), 0)
@@ -1104,9 +1225,9 @@ const App = () => {
             <span className="gold-label text-[10px] mb-1">{t('TOTAL')}</span>
           </div>
         </div>
-        <div className="leather-card p-6 border-b-2 border-b-gold/20">
+        <div className="leather-card p-6 border-b-2 border-b-red-500/30">
           <p className="gold-label text-[10px] opacity-40 mb-1">{t('RECOVERY ROI')}</p>
-          <div className="flex items-end gap-2 text-green-500/80">
+          <div className="flex items-end gap-2 text-green-500/80 drop-shadow-[0_0_10px_rgba(34,197,94,0.3)]">
             <span className="text-3xl font-bold leading-none">
               {new Intl.NumberFormat(undefined, { style: 'currency', currency: targetCurrency }).format(
                 receipts.reduce((a, r) => a + convertAmount((Number(r.tax_gst) || 0) + (Number(r.tax_qst_pst) || 0) + (Number(r.tax_hst) || 0) + (Number(r.tax_usa) || 0), r.currency || (r.region === 'USA' ? 'USD' : 'CAD')), 0)
@@ -1115,9 +1236,9 @@ const App = () => {
             <span className="text-[10px] mb-1 font-bold">{t('RECOVERY')}</span>
           </div>
         </div>
-        <div className="leather-card p-6 border-b-2 border-b-gold/20">
+        <div className="leather-card p-6 border-b-2 border-b-red-500/30">
           <p className="gold-label text-[10px] opacity-40 mb-1">{t('AUDIT INTEGRITY')}</p>
-          <div className="flex items-end gap-2 text-gold/80">
+          <div className="flex items-end gap-2 text-red-500/80 drop-shadow-[0_0_10px_rgba(255,40,0,0.3)]">
             <span className="text-3xl font-bold leading-none">98.2%</span>
             <span className="text-[10px] mb-1 font-bold">{t('VERIFIED')}</span>
           </div>
@@ -1127,13 +1248,13 @@ const App = () => {
       {/* Global Search & Controls */}
       <div className="flex flex-col md:flex-row gap-6 mb-12 items-center justify-between">
         <div className="relative w-full md:w-1/2">
-          <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-gold/40" size={18} />
+          <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-red-500/40" size={18} />
           <input 
             type="text" 
             placeholder={t('SEARCH LEDGER')}
             value={filterQuery}
             onChange={(e) => setFilterQuery(e.target.value)}
-            className="w-full leather-card pl-16 pr-6 py-4 border-none text-gold/80 placeholder:text-gold/20 focus:ring-1 focus:ring-gold/40 transition-all font-medium"
+            className="w-full leather-card pl-16 pr-6 py-4 border-none text-red-500 placeholder:text-red-500/20 focus:ring-1 focus:ring-red-500/40 transition-all font-medium"
           />
         </div>
         <div className="flex gap-4 w-full md:w-auto">
@@ -1159,16 +1280,68 @@ const App = () => {
         <div className="lg:col-span-4 space-y-12">
             {/* Deep Insight (Phase 8) */}
             {(role === "ENTERPRISE" || role === "SMALL_BUSINESS") && (
-              <DeepInsightCard 
-                insight={deepInsight} 
-                loading={isInsightLoading} 
-                onRefresh={fetchDeepInsight}
-                t={t}
-              />
+      <div className="space-y-8">
+        {/* Strategic Command Console - Comet Style */}
+        <div className="leather-card bg-black/80 border-red-500/20 h-[500px] flex flex-col overflow-hidden relative shadow-[0_0_50px_rgba(255,40,0,0.1)]">
+          <div className="p-3 border-b border-red-500/10 flex items-center justify-between bg-red-500/5">
+            <div className="flex gap-1.5">
+              <div className="w-2.5 h-2.5 rounded-full bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.5)]" />
+              <div className="w-2.5 h-2.5 rounded-full bg-red-900" />
+              <div className="w-2.5 h-2.5 rounded-full bg-zinc-800" />
+            </div>
+            <span className="text-[9px] font-bold text-red-500/50 tracking-[0.4em] font-mono pulse">STRATEGIC_COMMAND_CONSOLE_V2</span>
+          </div>
+          
+          <div className="p-4 font-mono text-[10px] space-y-2 overflow-y-auto flex-1 custom-scrollbar leading-relaxed">
+            {commandLogs.map((log, i) => (
+              <motion.div 
+                key={i} 
+                initial={{ opacity: 0, x: -5 }} 
+                animate={{ opacity: 1, x: 0 }}
+                className={`
+                  ${(log.type === 'sys' || log.type === 'system') ? 'text-red-500/40 italic' : ''}
+                  ${log.type === 'ready' ? 'text-red-500 font-bold bg-red-500/5 px-2 py-1 rounded border border-red-500/10' : ''}
+                  ${log.type === 'user' ? 'text-white border-l-2 border-red-500 pl-2 my-2 font-bold' : ''}
+                  ${log.type === 'agent' ? 'text-zinc-400' : ''}
+                  ${log.type === 'success' ? 'text-green-500 shadow-[0_0_10px_rgba(34,197,94,0.2)] font-bold' : ''}
+                  ${log.type === 'error' ? 'text-orange-500 font-bold' : ''}
+                `}
+              >
+                {log.type === 'agent' && <span className="animate-pulse mr-2">⟁</span>}
+                {log.msg}
+              </motion.div>
+            ))}
+            {isAgentWorking && (
+              <div className="text-red-500 animate-pulse">$ THINKING... [AGENTIC_PROCESS_ACTIVE]</div>
+            )}
+            <div ref={terminalEndRef} />
+
+          </div>
+
+          <form onSubmit={executeStrategicCommand} className="p-3 bg-red-500/5 border-t border-red-500/10 flex items-center gap-3">
+            <span className="text-red-500 font-bold font-mono">$</span>
+            <input 
+              type="text"
+              value={commandInput}
+              onChange={(e) => setCommandInput(e.target.value)}
+              placeholder={t('ISSUE_COMMAND_TO_SOVEREIGN_AGENT')}
+              className="bg-transparent border-none text-white font-mono text-xs w-full focus:ring-0 placeholder:text-red-500/20"
+              disabled={isAgentWorking}
+            />
+          </form>
+        </div>
+
+        <DeepInsightCard 
+          insight={deepInsight} 
+          loading={isInsightLoading} 
+          onRefresh={fetchDeepInsight}
+          t={t}
+        />
+      </div>
             )}
             {/* Expenditure Velocity Chart */}
             <div className={`leather-card ${role === "PERSONAL" ? 'hidden' : ''}`}>
-              <h2 className="text-lg font-bold mb-6 flex items-center gap-3 uppercase tracking-widest text-gold/80">
+              <h2 className="text-lg font-bold mb-6 flex items-center gap-3 uppercase tracking-widest text-red-500/80">
                 <TrendingUp size={18} /> {t('EXPENDITURE VELOCITY')}
               </h2>
               <div className="h-64 w-full">
@@ -1179,33 +1352,33 @@ const App = () => {
                   }))}>
                     <defs>
                       <linearGradient id="colorAmt" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#D4AF37" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="#D4AF37" stopOpacity={0}/>
+                        <stop offset="5%" stopColor="#ff2800" stopOpacity={0.4}/>
+                        <stop offset="95%" stopColor="#ff2800" stopOpacity={0}/>
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(212, 175, 55, 0.05)" vertical={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 40, 0, 0.05)" vertical={false} />
                     <XAxis 
                       dataKey="date" 
-                      stroke="rgba(212, 175, 55, 0.4)" 
+                      stroke="rgba(255, 40, 0, 0.4)" 
                       fontSize={10} 
                       tickLine={false}
                       axisLine={false}
                     />
                     <YAxis 
-                      stroke="rgba(212, 175, 55, 0.4)" 
+                      stroke="rgba(255, 40, 0, 0.4)" 
                       fontSize={10} 
                       tickLine={false}
                       axisLine={false}
                       tickFormatter={(value) => `$${value}`}
                     />
                     <Tooltip 
-                      contentStyle={{ backgroundColor: '#000', border: '1px solid #D4AF37', borderRadius: '0', fontSize: '12px' }}
-                      itemStyle={{ color: '#D4AF37' }}
+                      contentStyle={{ backgroundColor: '#050505', border: '1px solid #ff2800', borderRadius: '4px', fontSize: '12px' }}
+                      itemStyle={{ color: '#ff2800', fontWeight: 'bold' }}
                     />
                     <Area 
                       type="monotone" 
                       dataKey="amount" 
-                      stroke="#D4AF37" 
+                      stroke="#ff2800" 
                       strokeWidth={3}
                       fillOpacity={1} 
                       fill="url(#colorAmt)" 
@@ -1235,14 +1408,14 @@ const App = () => {
                       paddingAngle={5}
                       dataKey="value"
                     >
-                      <Cell fill="#D4AF37" stroke="rgba(0,0,0,0.5)" />
-                      <Cell fill="#996515" stroke="rgba(0,0,0,0.5)" />
-                      <Cell fill="#AF8A54" stroke="rgba(0,0,0,0.5)" />
-                      <Cell fill="#C5A059" stroke="rgba(0,0,0,0.5)" />
+                      <Cell fill="#ff2800" stroke="rgba(0,0,0,0.5)" />
+                      <Cell fill="#b30000" stroke="rgba(0,0,0,0.5)" />
+                      <Cell fill="#ff6b6b" stroke="rgba(0,0,0,0.5)" />
+                      <Cell fill="#4a0000" stroke="rgba(0,0,0,0.5)" />
                     </Pie>
                     <Tooltip 
-                      contentStyle={{ backgroundColor: '#000', border: '1px solid #D4AF37', borderRadius: '0' }}
-                      itemStyle={{ color: '#D4AF37' }}
+                      contentStyle={{ backgroundColor: '#050505', border: '1px solid #ff2800', borderRadius: '4px' }}
+                      itemStyle={{ color: '#ff2800', fontWeight: 'bold' }}
                     />
                   </PieChart>
                 </ResponsiveContainer>
@@ -1272,11 +1445,11 @@ const App = () => {
                 id="receipt-upload" 
                 onChange={handleFileUpload}
               />
-              <label htmlFor="receipt-upload" className="file-input group">
+              <label htmlFor="receipt-upload" className="file-input group cursor-pointer h-32 flex flex-col justify-center items-center rounded-lg border-2 border-dashed border-red-500/30 hover:border-red-500 bg-black/30 hover:bg-red-500/5 transition-all">
                 <div className="text-center">
-                   <Plus size={40} className="mx-auto mb-4 text-gold opacity-40 group-hover:opacity-100 transition-all duration-500" />
-                  <p className="gold-label opacity-40 group-hover:opacity-100 transition-opacity">
-                    {role === "PERSONAL" ? 'Drop Receipt for Approval' : t('DEPOSIT DIGITAL VOUCHER')}
+                   <Plus size={40} className="mx-auto mb-4 text-red-500 opacity-40 group-hover:opacity-100 transition-all duration-500 group-hover:scale-125" />
+                  <p className="gold-label opacity-40 group-hover:opacity-100 transition-opacity tracking-widest text-[9px]">
+                    {role === "PERSONAL" ? 'DROP RECEIPT FOR APPROVAL' : t('DEPOSIT DIGITAL VOUCHER')}
                   </p>
                 </div>
               </label>
@@ -1284,8 +1457,9 @@ const App = () => {
             
             <button 
               onClick={() => setIsScanningBarcode(true)}
-              className="w-full mt-4 flex items-center justify-center gap-2 py-3 border border-gold/40 text-gold hover:bg-gold/10 transition-all font-bold tracking-widest text-[10px]"
+              className="w-full mt-4 flex items-center justify-center gap-2 py-4 border border-red-500/40 text-red-500 hover:bg-red-500/10 transition-all font-bold tracking-widest text-[10px] uppercase shadow-[inset_0_0_15px_rgba(255,40,0,0.1)] hover:shadow-[inset_0_0_20px_rgba(255,40,0,0.3)]"
             >
+              <Zap size={14} className="fill-red-500/20" />
               SCAN BARCODE
             </button>
 
@@ -1307,14 +1481,32 @@ const App = () => {
             <div className="space-y-4">
                <p className="gold-label opacity-40 px-2">Organization Suite</p>
               <div className="flex flex-wrap gap-2">
-                {['Business', 'Travel', 'Meals', 'Supplies', 'Audit-Pending'].map(cat => (
-                  <button key={cat} className="category-chip active">
+                {['Business', 'Travel', 'Meals', 'Supplies', 'Technology', 'Operations', 'Logistics'].map(cat => (
+                  <button
+                    key={cat}
+                    onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
+                    className={`category-chip ${activeCategory === cat ? 'active ring-1 ring-gold/60' : 'opacity-50 hover:opacity-100'}`}
+                  >
                     {cat}
                   </button>
                 ))}
+                {activeCategory && (
+                  <button onClick={() => setActiveCategory(null)} className="text-[9px] text-red-500/60 hover:text-red-500 transition-colors ml-1 uppercase tracking-widest">
+                    ✕ Clear
+                  </button>
+                )}
               </div>
             </div>
           )}
+
+          {/* Manual Entry Button */}
+          <button
+            onClick={() => setIsManualEntryOpen(true)}
+            className="w-full flex items-center justify-center gap-2 py-3 border border-gold/20 text-gold/50 hover:border-gold/60 hover:text-gold hover:bg-gold/5 transition-all font-bold tracking-widest text-[10px] uppercase"
+          >
+            <Plus size={14} />
+            MANUAL ENTRY
+          </button>
 
           {(role === "ENTERPRISE" || role === "SMALL_BUSINESS") && (
             <motion.div 
@@ -1365,20 +1557,20 @@ const App = () => {
                           paddingAngle={5}
                           dataKey="value"
                         >
-                          <Cell stroke="none" fill="#d4af37" fillOpacity={0.8} />
-                          <Cell stroke="none" fill="#e11d48" fillOpacity={0.6} />
-                          <Cell stroke="none" fill="#d4af37" fillOpacity={0.4} />
-                          <Cell stroke="none" fill="#ffffff" fillOpacity={0.1} />
-                        </Pie>
-                        <Tooltip 
-                          contentStyle={{ backgroundColor: '#0a0a0a', border: '1px solid rgba(212,175,55,0.2)', fontSize: '10px' }}
-                          itemStyle={{ color: '#d4af37' }}
-                        />
-                      </PieChart>
-                    </ResponsiveContainer>
-                    <div className="absolute top-[60%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
-                      <BarChart3 className="text-gold opacity-20 mx-auto" size={24} />
-                    </div>
+                            <Cell stroke="none" fill="#ff2800" fillOpacity={0.8} />
+                            <Cell stroke="none" fill="#b30000" fillOpacity={0.6} />
+                            <Cell stroke="none" fill="#ff4d4d" fillOpacity={0.4} />
+                            <Cell stroke="none" fill="#4a0000" fillOpacity={0.2} />
+                          </Pie>
+                          <Tooltip 
+                            contentStyle={{ backgroundColor: '#050505', border: '1px solid rgba(255,40,0,0.3)', borderRadius: '4px', fontSize: '10px' }}
+                            itemStyle={{ color: '#ff2800', fontWeight: 'bold' }}
+                          />
+                        </PieChart>
+                      </ResponsiveContainer>
+                      <div className="absolute top-[60%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
+                        <BarChart3 className="text-red-500 opacity-20 mx-auto drop-shadow-[0_0_10px_rgba(255,40,0,0.5)]" size={24} />
+                      </div>
                   </div>
 
                   {/* Spending Trend */}
@@ -1397,9 +1589,9 @@ const App = () => {
                         })
                       }>
                         <defs>
-                          <linearGradient id="goldGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#d4af37" stopOpacity={0.3}/>
-                            <stop offset="95%" stopColor="#d4af37" stopOpacity={0}/>
+                          <linearGradient id="redGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#ff2800" stopOpacity={0.4}/>
+                            <stop offset="95%" stopColor="#ff2800" stopOpacity={0}/>
                           </linearGradient>
                         </defs>
                         <XAxis 
@@ -1410,9 +1602,10 @@ const App = () => {
                         <Area 
                           type="monotone" 
                           dataKey="amount" 
-                          stroke="#d4af37" 
+                          stroke="#ff2800" 
                           strokeWidth={2}
-                          fill="url(#goldGradient)" 
+                          fillOpacity={1} 
+                          fill="url(#redGradient)" 
                         />
                         <Tooltip 
                           contentStyle={{ backgroundColor: '#0a0a0a', border: '1px solid rgba(212,175,55,0.2)', fontSize: '10px' }}
@@ -1473,9 +1666,9 @@ const App = () => {
               
               <div className="space-y-4">
                 {currentVault.members?.map(m => (
-                  <div key={m.user_id} className="flex justify-between items-center p-3 bg-white/5 border border-white/5 group hover:border-gold/20 transition-all">
+                  <div key={m.user_id} className="flex justify-between items-center p-3 bg-white/5 border border-white/5 group hover:border-red-500/20 transition-all">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-gold/10 flex items-center justify-center text-gold font-bold text-xs border border-gold/20">
+                      <div className="w-8 h-8 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 font-bold text-xs border border-red-500/20">
                         {m.user?.name?.charAt(0) || m.user?.email?.charAt(0)}
                       </div>
                       <div>
@@ -1513,13 +1706,13 @@ const App = () => {
             <h2 className="text-xl font-bold tracking-tight gold-heading" style={{ fontFamily: "'Cormorant Garamond', serif" }}>{t('AUDIT LEDGER')}</h2>
             <div className="flex items-center gap-4">
               <div className="relative group">
-                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-gold transition-colors" />
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-red-500 transition-colors" />
                 <input 
                   type="text"
                   placeholder="SEARCH LEDGER..."
                   value={filterQuery}
                   onChange={(e) => setFilterQuery(e.target.value)}
-                  className="bg-black/40 border border-white/5 pl-10 pr-4 py-2 text-[10px] tracking-widest gold-label focus:border-gold/30 focus:outline-none transition-all w-48 focus:w-64"
+                  className="bg-black/40 border border-white/5 pl-10 pr-4 py-2 text-[10px] tracking-widest gold-label focus:border-red-500/30 focus:outline-none transition-all w-48 focus:w-64"
                 />
               </div>
               <div className="flex items-center gap-3">
@@ -1562,15 +1755,15 @@ const App = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="leather-card border-gold/30 relative overflow-hidden ring-1 ring-gold/10"
+                className="leather-card border-red-500/30 relative overflow-hidden ring-1 ring-red-500/10"
               >
                 <div className="animate-scan" />
                 <div className="flex items-center gap-6 relative z-10">
-                  <div className="p-4 bg-gold/10 rounded-lg">
-                    <PieIcon className="text-gold animate-spin-slow" size={24} />
+                  <div className="p-4 bg-red-500/10 rounded-lg">
+                    <PieIcon className="text-red-500 animate-spin-slow" size={24} />
                   </div>
                   <div>
-                    <h3 className="font-bold text-gold tracking-wide">{t('SYSTEM ANALYSIS IN PROGRESS')}</h3>
+                    <h3 className="font-bold text-red-500 tracking-wide">{t('SYSTEM ANALYSIS IN PROGRESS')}</h3>
                     <p className="text-xs text-text-dim uppercase tracking-widest">{t('PARSING_REGION', { region })}</p>
                   </div>
                 </div>
@@ -1580,12 +1773,12 @@ const App = () => {
 
           <div className="space-y-4">
             {receipts.length === 0 && !isScanning ? (
-              <div className="leather-card text-center py-24 opacity-30 border-dashed">
-                 <FileText size={48} className="mx-auto mb-6 text-gold opacity-10" />
-                <p className="gold-label opacity-20">{t('LEDGER CURRENTLY CLEAR')}</p>
+              <div className="leather-card text-center py-24 opacity-30 border-dashed border-red-500/20">
+                 <FileText size={48} className="mx-auto mb-6 text-red-500 opacity-20" />
+                <p className="gold-label opacity-40">{t('LEDGER CURRENTLY CLEAR')}</p>
               </div>
             ) : (
-              <div className="leather-card p-0 overflow-hidden relative">
+              <div className="leather-card p-0 overflow-hidden relative border-t-2 border-t-red-500/20">
                 {/* Thread Header Decoration */}
                 <div className="absolute top-0 left-0 right-0 h-[10px] bg-black/40 z-20 flex px-10 gap-4">
                   <div className="w-1 h-1 rounded-full bg-gold/20" />
@@ -1617,7 +1810,7 @@ const App = () => {
                             <div className="flex items-center gap-2">
                               {h.label}
                               {sortConfig.key === h.key && (
-                                <ChevronRight className={`transition-transform duration-300 ${sortConfig.direction === 'asc' ? '-rotate-90 text-gold' : 'rotate-90 text-gold'}`} size={10} />
+                                <ChevronRight className={`transition-transform duration-300 ${sortConfig.direction === 'asc' ? '-rotate-90 text-red-500' : 'rotate-90 text-red-500'} drop-shadow-[0_0_5px_rgba(255,40,0,0.5)]`} size={10} />
                               )}
                             </div>
                           </th>
@@ -1626,7 +1819,11 @@ const App = () => {
                     </thead>
                     <tbody className="relative">
                       {receipts
-                        .filter(r => r.store_name?.toLowerCase().includes(filterQuery.toLowerCase()) || r.region?.toLowerCase().includes(filterQuery.toLowerCase()))
+                        .filter(r => {
+                          const matchesSearch = r.store_name?.toLowerCase().includes(filterQuery.toLowerCase()) || r.region?.toLowerCase().includes(filterQuery.toLowerCase()) || r.category?.toLowerCase().includes(filterQuery.toLowerCase());
+                          const matchesCategory = !activeCategory || r.category === activeCategory;
+                          return matchesSearch && matchesCategory;
+                        })
                         .sort((a, b) => {
                           const aVal = a[sortConfig.key];
                           const bVal = b[sortConfig.key];
@@ -1637,7 +1834,7 @@ const App = () => {
                         <React.Fragment key={r.id || i}>
                           <tr 
                             onClick={() => setSelectedReceipt(selectedReceipt === r.id ? null : r.id)}
-                            className={`group transition-all duration-300 cursor-pointer ${selectedReceipt === r.id ? 'bg-gold/[0.03]' : 'hover:bg-white/[0.03]'}`}
+                            className={`receipt-row transition-all duration-300 cursor-pointer ${selectedReceipt === r.id ? 'active' : ''}`}
                           >
                             <td className="px-6 py-5 first:pl-10">
                               <div className="flex items-center gap-2">
@@ -1653,7 +1850,7 @@ const App = () => {
                                     <div className="w-1 h-1 bg-rose-600 rotate-45" />
                                   </div>
                                 )}
-                                <div className={`w-1.5 h-1.5 rounded-full ${r.id ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]' : 'bg-gold gold-pulse'}`} />
+                                <div className={`w-1.5 h-1.5 rounded-full ${r.id ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]' : 'bg-red-500 gold-pulse'}`} />
                               </div>
                             </td>
                             <td className="px-6 py-5 text-[11px] font-mono text-white/40 group-hover:text-gold/60 transition-colors">
@@ -1661,8 +1858,8 @@ const App = () => {
                             </td>
                             <td className="px-6 py-5">
                               <div className="flex flex-col">
-                                <span className="text-sm font-bold gold-heading group-hover:gold-foil transition-all leading-none mb-1">
-                                  {r.store_name?.toUpperCase() || t('UNKNOWN MERCHANT')}
+                                <span className="text-xs font-bold tracking-wider text-white group-hover:text-red-500 transition-colors uppercase">
+                                  {r.store_name?.toUpperCase() || t('UNIDENTIFIED ENTITY')}
                                 </span>
                                 <span className="text-[10px] text-white/20 tracking-widest">{r.category?.toUpperCase()}</span>
                               </div>
@@ -1674,7 +1871,7 @@ const App = () => {
                                 </span>
                               </div>
                             </td>
-                            <td className="px-6 py-5 text-[11px] font-mono text-gold/60">
+                            <td className="px-6 py-5 text-[11px] font-mono text-red-500/60">
                               {new Intl.NumberFormat(undefined, { 
                                 style: 'currency', 
                                 currency: currencyMode === 'LOCAL' ? (r.currency || (r.region === 'USA' ? 'USD' : 'CAD')) : targetCurrency 
@@ -1694,7 +1891,7 @@ const App = () => {
                                     currencyMode === 'LOCAL' ? r.total_amount : convertAmount(r.total_amount, r.currency || (r.region === 'USA' ? 'USD' : 'CAD'))
                                   )}
                                 </span>
-                                <ChevronRight className={`opacity-0 group-hover:opacity-40 transition-all duration-300 ${selectedReceipt === r.id ? 'rotate-90 text-gold opacity-100' : ''}`} size={14} />
+                                <ChevronRight className={`opacity-0 group-hover:opacity-40 transition-all duration-300 ${selectedReceipt === r.id ? 'rotate-90 text-red-500 drop-shadow-[0_0_8px_rgba(255,40,0,0.8)] opacity-100' : ''}`} size={14} />
                               </div>
                             </td>
                           </tr>
@@ -1703,7 +1900,7 @@ const App = () => {
                           <AnimatePresence>
                             {selectedReceipt === r.id && (
                               <tr>
-                                <td colSpan={6} className="p-0 border-b border-gold/20">
+                                <td colSpan={6} className="p-0 border-b border-red-500/20">
                                   <motion.div 
                                     initial={{ height: 0, opacity: 0 }}
                                     animate={{ height: 'auto', opacity: 1 }}
@@ -1713,10 +1910,10 @@ const App = () => {
                                     <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-12">
                                       {/* Receipt Visual */}
                                       <div className="space-y-4">
-                                        <div className="aspect-[3/4] bg-white/[0.02] border border-white/5 rounded-lg flex items-center justify-center relative group/img overflow-hidden">
-                                           <div className="absolute inset-0 bg-gold/5 opacity-0 group-hover/img:opacity-100 transition-opacity" />
+                                        <div className="aspect-[3/4] bg-white/[0.02] border border-red-500/10 rounded-lg flex items-center justify-center relative group/img overflow-hidden shadow-[inset_0_0_20px_rgba(255,40,0,0.05)]">
+                                           <div className="absolute inset-0 bg-red-500/5 opacity-0 group-hover/img:opacity-100 transition-opacity" />
                                            <div className="text-center p-8">
-                                              <Camera size={24} className="mx-auto mb-4 text-white/10" />
+                                              <Camera size={24} className="mx-auto mb-4 text-red-500/30 group-hover/img:text-red-500 transition-colors duration-500 drop-shadow-[0_0_10px_rgba(255,40,0,0.2)]" />
                                               <p className="text-[10px] text-white/20 tracking-widest font-bold">{t('LEGITIMACY VERIFIED')}</p>
                                            </div>
                                            <div className="verified-watermark">{t('CERTIFIED AUDIT')}</div>
@@ -1726,7 +1923,7 @@ const App = () => {
                                       {/* Audit Details */}
                                       <div className="space-y-8">
                                         <div>
-                                          <h4 className="gold-label mb-6 text-xs border-b border-gold/10 pb-2 flex justify-between items-center">
+                                          <h4 className="gold-label mb-6 text-xs border-b border-red-500/10 pb-2 flex justify-between items-center">
                                             {t('JURISDICTIONAL BREAKDOWN')}
                                             <span className="text-[10px] text-green-500">85% {t('OPTIMIZED')}</span>
                                           </h4>
@@ -1742,13 +1939,13 @@ const App = () => {
                                             {Number(r.tax_gst) > 0 && (
                                               <div className="space-y-1">
                                                 <p className="text-[10px] opacity-40 font-bold tracking-widest uppercase">{t('GST LIABILITY')}</p>
-                                                <p className="gold-mono text-sm text-gold/80">{new Intl.NumberFormat('en-CA', { style: 'currency', currency: r.currency || 'CAD' }).format(r.tax_gst)}</p>
+                                                <p className="gold-mono text-sm text-red-500/80">{new Intl.NumberFormat('en-CA', { style: 'currency', currency: r.currency || 'CAD' }).format(r.tax_gst)}</p>
                                               </div>
                                             )}
                                             {Number(r.tax_qst_pst) > 0 && (
                                               <div className="space-y-1">
                                                 <p className="text-[10px] opacity-40 font-bold tracking-widest uppercase">{t('QST CONTRIBUTION')}</p>
-                                                <p className="gold-mono text-sm text-gold/80">{new Intl.NumberFormat('en-CA', { style: 'currency', currency: r.currency || 'CAD' }).format(r.tax_qst_pst)}</p>
+                                                <p className="gold-mono text-sm text-red-500/80">{new Intl.NumberFormat('en-CA', { style: 'currency', currency: r.currency || 'CAD' }).format(r.tax_qst_pst)}</p>
                                               </div>
                                             )}
                                           </div>
@@ -1763,7 +1960,10 @@ const App = () => {
 
                                         <div className="flex gap-4">
                                           <button className="gold-hardware-small py-3 px-6 flex-1 text-[9px]">{t('ENFORCE COMPLIANCE')}</button>
-                                          <button className="flex-1 p-2 leather-card border-none hover:bg-rose-950/20 text-rose-500 text-[9px] uppercase font-bold tracking-widest transition-colors">{t('DE-AUTHORIZE')}</button>
+                                          <button
+                                            onClick={(e) => handleDeleteReceipt(r.id, e)}
+                                            className="flex-1 p-2 leather-card border-none hover:bg-rose-950/20 text-rose-500 text-[9px] uppercase font-bold tracking-widest transition-colors"
+                                          >{t('DE-AUTHORIZE')}</button>
                                         </div>
                                       </div>
                                     </div>
@@ -1776,9 +1976,9 @@ const App = () => {
                       ))}
                     </tbody>
                     <tfoot className="sticky bottom-0 z-10 bg-[#0a0a0a]">
-                      <tr className="border-t-2 border-gold/20">
-                        <td colSpan={4} className="px-6 py-6 gold-label text-gold font-black tracking-[0.4em]">{t('EXECUTIVE PORTFOLIO TOTALS')}</td>
-                        <td className="px-6 py-6 font-bold gold-mono text-gold/80 text-lg">
+                      <tr className="border-t-2 border-red-500/20">
+                        <td colSpan={4} className="px-6 py-6 gold-label text-red-500 font-black tracking-[0.4em]">{t('EXECUTIVE PORTFOLIO TOTALS')}</td>
+                        <td className="px-6 py-6 font-bold gold-mono text-red-500/80 text-lg">
                           {new Intl.NumberFormat(undefined, { 
                             style: 'currency', 
                             currency: currencyMode === 'LOCAL' ? (region === 'USA' ? 'USD' : 'CAD') : targetCurrency 
@@ -1902,7 +2102,89 @@ const App = () => {
         )}
       </AnimatePresence>
 
-    </motion.div>
+      {/* Manual Entry Modal */}
+      <AnimatePresence>
+        {isManualEntryOpen && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[100] flex items-center justify-center p-6">
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="leather-card w-full max-w-md border-gold/20"
+            >
+              <h2 className="gold-heading text-xl mb-2 tracking-widest uppercase">Manual Entry</h2>
+              <p className="gold-label opacity-40 text-[10px] mb-6 tracking-widest">ARCHIVE RECEIPT WITHOUT SCAN</p>
+              <form onSubmit={handleManualEntry} className="space-y-5">
+                <div>
+                  <label className="gold-label text-[10px] mb-2 block tracking-widest uppercase">Merchant Name</label>
+                  <input
+                    autoFocus
+                    required
+                    value={manualMerchant}
+                    onChange={e => setManualMerchant(e.target.value)}
+                    className="w-full bg-white/5 border border-gold/10 p-4 gold-text text-sm focus:border-gold/40 transition-all focus:outline-none"
+                    placeholder="e.g. STARBUCKS RESERVE"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="gold-label text-[10px] mb-2 block tracking-widest uppercase">Total Amount</label>
+                    <input
+                      required
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={manualAmount}
+                      onChange={e => setManualAmount(e.target.value)}
+                      className="w-full bg-white/5 border border-gold/10 p-4 gold-text text-sm focus:border-gold/40 transition-all focus:outline-none"
+                      placeholder="0.00"
+                    />
+                  </div>
+                  <div>
+                    <label className="gold-label text-[10px] mb-2 block tracking-widest uppercase">Date</label>
+                    <input
+                      type="date"
+                      value={manualDate || new Date().toISOString().split('T')[0]}
+                      onChange={e => setManualDate(e.target.value)}
+                      className="w-full bg-white/5 border border-gold/10 p-4 gold-text text-sm focus:border-gold/40 transition-all focus:outline-none"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="gold-label text-[10px] mb-2 block tracking-widest uppercase">Category</label>
+                  <select
+                    value={manualCategory}
+                    onChange={e => setManualCategory(e.target.value)}
+                    className="w-full bg-[#0a0a0a] border border-gold/10 p-4 gold-text text-sm focus:border-gold/40 transition-all focus:outline-none"
+                  >
+                    {['General','Business','Travel','Meals','Supplies','Technology','Operations','Logistics','Telecommunications'].map(c => (
+                      <option key={c} value={c} className="bg-[#0a0a0a]">{c}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex gap-4 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsManualEntryOpen(false)}
+                    className="flex-1 py-4 text-[10px] gold-label uppercase tracking-widest border border-white/10 hover:bg-white/5 transition-all"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 py-4 gold-hardware text-[10px] font-bold text-black uppercase tracking-widest shadow-[0_0_20px_rgba(212,175,55,0.2)]"
+                  >
+                    Archive Entry
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      </motion.div>
+    </div>
   );
 };
 
