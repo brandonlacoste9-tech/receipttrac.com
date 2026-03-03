@@ -1,0 +1,429 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:wght@700&family=Cormorant+Garamond:wght@400;700&display=swap');
+
+:root {
+  --bg-deep: #0a0a0a;
+  --leather-surface: #151515;
+  --gold: #ff2800;
+  --gold-muted: #cc2000;
+  --gold-glow: rgba(255, 40, 0, 0.2);
+  --text-main: #e0e0e0;
+  --text-dim: #777777;
+  --leather-grain: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-deep);
+  color: var(--text-main);
+  font-family: 'Outfit', sans-serif;
+  overflow-x: hidden;
+}
+
+/* Base Utility for the Binder Feel */
+.luxury-card, .leather-card {
+  background-color: var(--leather-surface);
+  background-image: var(--leather-grain);
+  background-blend-mode: soft-light;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 
+    0 10px 40px rgba(0, 0, 0, 0.8),
+    inset 0 0 20px rgba(0, 0, 0, 0.5);
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+/* Gold Stitching — Double Thread */
+.luxury-card::after, .leather-card::after {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px dashed rgba(255, 40, 0, 0.35);
+  border-radius: 8px;
+  pointer-events: none;
+  opacity: 1;
+  box-shadow: 0 0 4px rgba(255, 40, 0, 0.08);
+}
+
+.luxury-card::before, .leather-card::before {
+  content: '';
+  position: absolute;
+  inset: 10px;
+  border: 1px dashed rgba(255, 40, 0, 0.12);
+  border-radius: 6px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.luxury-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 40, 0, 0.3);
+  box-shadow: 
+    0 20px 50px rgba(0, 0, 0, 0.9),
+    inset 0 0 25px rgba(0, 0, 0, 0.6);
+}
+
+.gold-text {
+  font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+  background: linear-gradient(135deg, #ff4d4d 0%, #ff2800 40%, #b30000 60%, #ff4d4d 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-shadow: none;
+}
+
+/* Gold Writing Accents */
+.gold-heading {
+  font-family: 'Cormorant Garamond', serif;
+  color: #ff2800;
+  font-size: 1.15em;
+  text-shadow: 0 0 20px rgba(255, 40, 0, 0.15);
+}
+
+.gold-label {
+  color: rgba(255, 40, 0, 0.6);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+.gold-mono {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  color: #ff2800;
+  font-weight: 600;
+}
+
+/* Gold Corner Emboss */
+.gold-corner {
+  position: relative;
+}
+
+.gold-corner::after {
+  content: '◆';
+  position: absolute;
+  top: -2px;
+  right: 10px;
+  font-size: 8px;
+  color: rgba(255, 40, 0, 0.25);
+  pointer-events: none;
+}
+
+.btn-gold, .gold-hardware {
+  background: linear-gradient(145deg, #ff2800, #cc2000);
+  color: #000;
+  border: none;
+  padding: 0.8rem 1.8rem;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 0.75rem;
+  box-shadow: 
+    0 4px 15px rgba(0,0,0,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.4);
+  transition: all 0.3s ease;
+}
+
+.btn-gold:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 25px var(--gold-glow);
+}
+
+.file-input {
+  width: 100%;
+  height: 180px;
+  border: 1px dashed rgba(255, 40, 0, 0.2);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+}
+
+.file-input:hover {
+  background: rgba(255, 40, 0, 0.03);
+  border-color: var(--gold);
+}
+
+/* Regional Badge Styling */
+.region-badge {
+  background: rgba(255, 40, 0, 0.1);
+  border: 1px solid rgba(255, 40, 0, 0.2);
+  color: var(--gold);
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+}
+
+@keyframes scan {
+  0% { transform: translateY(-100%); opacity: 0; }
+  50% { opacity: 0.8; height: 2px; box-shadow: 0 0 15px var(--gold); }
+  100% { transform: translateY(100%); opacity: 0; }
+}
+
+.animate-scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--gold);
+  box-shadow: 0 0 20px var(--gold);
+  animation: scan 2.5s ease-in-out infinite;
+  z-index: 5;
+}
+
+/* Scrollbar Styling for that Premium Look */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-deep);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #222;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold-muted);
+}
+
+/* Executive YOLO Polish */
+.success-stamp {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border: 8px solid var(--gold);
+  color: var(--gold);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  padding: 10px 40px;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 50;
+  letter-spacing: 0.2em;
+  box-shadow: 0 0 30px var(--gold-glow);
+  background: rgba(255, 40, 0, 0.05);
+}
+
+.success-stamp.active {
+  animation: stamp-drop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes stamp-drop {
+  0% { transform: translate(-50%, -50%) scale(5) rotate(-45deg); opacity: 0; }
+  100% { transform: translate(-50%, -50%) scale(1) rotate(-12deg); opacity: 0.4; }
+}
+
+.verified-watermark {
+  position: absolute;
+  top: 10px;
+  right: -30px;
+  transform: rotate(45deg);
+  font-size: 8px;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ff4d4d, #ff2800);
+  color: black;
+  padding: 2px 40px;
+  opacity: 0.15;
+  pointer-events: none;
+  letter-spacing: 2px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  z-index: 10;
+}
+
+/* Boss Mode Categories */
+.category-chip {
+  font-size: 9px;
+  font-weight: bold;
+  padding: 4px 10px;
+  background: rgba(255, 40, 0, 0.05);
+  border: 1px solid rgba(255, 40, 0, 0.1);
+  color: #ff2800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+.category-chip:hover {
+  background: rgba(255, 40, 0, 0.15);
+  border-color: #ff2800;
+}
+
+/* Spreadsheet Table */
+table {
+  border-collapse: collapse;
+}
+
+table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+table tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.01);
+}
+
+table tfoot td {
+  font-weight: 700;
+}
+
+/* Gold Foil Stamp Effect */
+.gold-foil {
+  font-family: 'Cormorant Garamond', serif;
+  background: linear-gradient(
+    135deg,
+    #b30000 0%,
+    #ff4d4d 25%,
+    #ff2800 50%,
+    #ff4d4d 75%,
+    #800000 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+  filter: brightness(1.1);
+}
+
+.embossed-header {
+  text-shadow: 
+    -1px -1px 0 rgba(255,255,255,0.02),
+    1px 1px 0 rgba(0,0,0,0.4);
+  background-color: #0f0f0f;
+}
+
+.ledger-row-hover:hover {
+  background: linear-gradient(90deg, transparent, rgba(255, 40, 0, 0.03), transparent);
+}
+
+.drawer-shadow {
+  box-shadow: 
+    inset 0 10px 20px -10px rgba(0,0,0,0.8),
+    inset 0 -10px 20px -10px rgba(0,0,0,0.8);
+}
+
+.gold-hardware-small {
+  background: linear-gradient(145deg, #ff2800, #cc2000);
+  border: none;
+  border-radius: 2px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+  transition: all 0.2s;
+}
+
+.gold-hardware-small:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+/* Gold Divider Line */
+.gold-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 40, 0, 0.3), transparent);
+  margin: 1.5rem 0;
+  border: none;
+}
+
+/* Gold Glow Ring on focus */
+input:focus, button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 40, 0, 0.3), 0 0 15px rgba(255, 40, 0, 0.1);
+}
+
+/* Pulse indicator for active gold accents */
+@keyframes gold-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.gold-pulse {
+  animation: gold-pulse 2s ease-in-out infinite;
+}
+
+/* Gold stitch line decoration */
+.stitch-line {
+  border-top: 1px dashed rgba(255, 40, 0, 0.25);
+  margin: 0.75rem 0;
+}
+
+/* FISCALOOK Logo Component (CSS Reproduction) */
+.logo-vault {
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(135deg, #5c3521 0%, #3d2316 100%); /* Rich book leather gradient */
+  background-image: var(--leather-grain);
+  background-blend-mode: soft-light;
+  border-radius: 12px;
+  position: relative;
+  box-shadow: 
+    inset 4px 0 10px rgba(0,0,0,0.6), /* Book spine depth */
+    0 15px 45px rgba(0,0,0,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255,255,255,0.08);
+  transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.logo-vault:hover {
+  transform: scale(1.05) rotate(-2deg);
+}
+
+.logo-vault::after {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(255, 40, 0, 0.2);
+  border-radius: 4px;
+}
+
+.logo-letter {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 80px;
+  font-weight: 700;
+  color: rgba(0,0,0,0.5); /* Embossed look */
+  text-shadow: 
+    1px 1px 1px rgba(255,255,255,0.1), 
+    -1px -1px 1px rgba(0,0,0,0.8);
+  user-select: none;
+}
+
+.logo-spine {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 25px;
+  background: rgba(0,0,0,0.15);
+  border-right: 1px solid rgba(255,255,255,0.05);
+  border-radius: 8px 0 0 8px;
+}
+
+.vault-entrance-card {
+  background: white;
+  padding: 4rem;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+  border-radius: 2px;
+}
