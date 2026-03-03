@@ -16,6 +16,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import { startRegistration, startAuthentication } from '@simplewebauthn/browser';
 import { useTranslation } from 'react-i18next';
+import BarcodeScanner from './BarcodeScanner';
 
 const DeepInsightCard = ({ insight, loading, onRefresh, t }) => {
   if (loading) {
@@ -130,8 +131,9 @@ const App = () => {
   const [sortConfig, setSortConfig] = useState({ key: 'scanned_at', direction: 'desc' });
   const [filterQuery, setFilterQuery] = useState("");
   const [currencyMode, setCurrencyMode] = useState('LOCAL'); // 'LOCAL' or 'ALT'
-  const [token, setToken] = useState(localStorage.getItem('fiscalook_token'));
+  const [token, setToken] = useState(localStorage.getItem('receipttrac_token'));
   const [showLogin, setShowLogin] = useState(false);
+  const [isScanningBarcode, setIsScanningBarcode] = useState(false);
   const [authMode, setAuthMode] = useState('login'); // 'login' or 'register'
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -205,7 +207,7 @@ const App = () => {
       const url = URL.createObjectURL(response.data);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `FISCALOOK_${region}_${new Date().toISOString().split('T')[0]}.xlsx`;
+      a.download = `ReceiptTrac_${region}_${new Date().toISOString().split('T')[0]}.xlsx`;
       a.click();
       URL.revokeObjectURL(url);
     } catch (err) {
@@ -299,7 +301,7 @@ const App = () => {
       const { token: newToken, user: newUser } = res.data;
       
       setToken(newToken);
-      localStorage.setItem('fiscalook_token', newToken);
+      localStorage.setItem('receipttrac_token', newToken);
       
       if (newUser) {
         setUser(newUser);
@@ -341,7 +343,7 @@ const App = () => {
       const { data: res } = await api.post('/api/auth/biometric/upgrade', asseResp);
       
       setToken(res.token);
-      localStorage.setItem('fiscalook_token', res.token);
+      localStorage.setItem('receipttrac_token', res.token);
       setUser(res.user);
       return true;
     } catch (err) {
@@ -358,7 +360,7 @@ const App = () => {
       const { data: res } = await axios.post('http://localhost:5001/api/auth/biometric/login-verify', asseResp, { withCredentials: true });
       
       setToken(res.token);
-      localStorage.setItem('fiscalook_token', res.token);
+      localStorage.setItem('receipttrac_token', res.token);
       setUser(res.user);
       if (res.user.region) setRegion(res.user.region);
     } catch (err) {
@@ -448,12 +450,66 @@ const App = () => {
           setTimeout(() => setShowFlash(false), 500);
           setTimeout(() => setRecentlyScannedId(null), 5000);
         }, 3000);
-      } catch (error) {
-        console.error('Scan failed');
+      } catch (err) {
+        console.error(err);
         setIsScanning(false);
       }
     };
     reader.readAsDataURL(file);
+  };
+
+  const handleBarcodeScan = async (barcode) => {
+    setIsScanningBarcode(false);
+    setIsScanning(true);
+    try {
+      const res = await api.post('/api/receipts/barcode', { 
+        barcode,
+        region: region,
+        vault_id: currentVault?.id
+      });
+      setTimeout(() => {
+        setReceipts(prev => [res.data, ...prev]);
+        setRecentlyScannedId(res.data.id);
+        setShowFlash(true);
+        setIsScanning(false);
+        setTimeout(() => setShowFlash(false), 500);
+        setTimeout(() => setRecentlyScannedId(null), 5000);
+      }, 1000);
+    } catch (err) {
+      console.error(err);
+      setIsScanning(false);
+    }
+  };
+
+  const handleManualEntry = async (e) => {
+    e.preventDefault();
+    setIsScanning(true);
+    try {
+      const res = await api.post('/api/receipts/manual', {
+        merchant: manualMerchant,
+        amount: parseFloat(manualAmount),
+        date: manualDate,
+        category: manualCategory,
+        region: region,
+        vault_id: currentVault?.id
+      });
+      setTimeout(() => {
+        setReceipts(prev => [res.data, ...prev]);
+        setRecentlyScannedId(res.data.id);
+        setShowFlash(true);
+        setIsScanning(false);
+        setManualMerchant('');
+        setManualAmount('');
+        setManualDate('');
+        setManualCategory('');
+        setIsManualEntryOpen(false);
+        setTimeout(() => setShowFlash(false), 500);
+        setTimeout(() => setRecentlyScannedId(null), 5000);
+      }, 1000);
+    } catch (err) {
+      console.error(err);
+      setIsScanning(false);
+    }
   };
 
   // 🏛️ EXECUTIVE ENTRANCE (LANDING + AUTH)
@@ -465,7 +521,7 @@ const App = () => {
           <nav className="fixed top-0 left-0 right-0 p-8 flex justify-between items-center z-50 bg-gradient-to-b from-black to-transparent backdrop-blur-sm">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center font-bold text-gold text-[10px] tracking-tighter">FL</div>
-              <span className="gold-text tracking-[0.3em] text-xs italic uppercase">FISCALOOK</span>
+              <span className="gold-text tracking-[0.3em] text-xs italic uppercase">ReceiptTrac</span>
             </div>
             <button 
               onClick={() => setShowLogin(true)}
@@ -488,7 +544,7 @@ const App = () => {
                 <span className="logo-letter">F</span>
               </div>
               <h1 className="text-8xl md:text-[10rem] font-bold gold-foil tracking-tighter mb-4" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-                FISCALOOK
+                ReceiptTrac
               </h1>
               <div className="flex items-center justify-center gap-4 mb-12">
                 <div className="h-[1px] w-24 bg-gold/20" />
@@ -551,7 +607,7 @@ const App = () => {
                <h2 className="gold-heading mb-6 text-3xl">The Sovereign Oath</h2>
                <div className="stitch-line mb-8" />
                <p className="text-white/60 leading-loose text-lg mb-8 italic">
-                 "In an age of surveillance, FISCALOOK stands as a sentinel of financial privacy. 
+                 "In an age of surveillance, ReceiptTrac stands as a sentinel of financial privacy. 
                  We believe in tools that work for you, not those that report you. 
                  Your receipts are your records. Your data is your territory. 
                  We only provide the lens."
@@ -590,7 +646,7 @@ const App = () => {
                 <div className="logo-spine" />
                 <span className="logo-letter">F</span>
             </div>
-            <p className="text-[10px] gold-label opacity-20 tracking-[0.5em] mb-4">FISCALOOK ARCHIVES • SOVEREIGN JURISDICTION</p>
+            <p className="text-[10px] gold-label opacity-20 tracking-[0.5em] mb-4">ReceiptTrac ARCHIVES • SOVEREIGN JURISDICTION</p>
             <p className="text-[8px] italic opacity-10">Established 2026 • Designed for Continuous Oversight</p>
             
             {/* Subtle Signature Accent */}
@@ -623,7 +679,7 @@ const App = () => {
                 <div className="logo-spine" />
                 <span className="logo-letter">F</span>
              </div>
-             <h1 className="text-5xl font-bold gold-foil mb-2 tracking-tighter" style={{ fontFamily: "'Cormorant Garamond', serif" }}>FISCALOOK</h1>
+             <h1 className="text-5xl font-bold gold-foil mb-2 tracking-tighter" style={{ fontFamily: "'Cormorant Garamond', serif" }}>ReceiptTrac</h1>
              <p className="gold-label opacity-60">Vault Access Required</p>
           </div>
 
@@ -648,7 +704,7 @@ const App = () => {
                     className="w-full bg-black/40 border border-white/10 p-3 rounded text-white focus:border-gold/50 transition-colors"
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
-                    placeholder="executive@fiscalook.com"
+                    placeholder="executive@receipttrac.com"
                   />
                 </div>
                 <div>
@@ -709,7 +765,7 @@ const App = () => {
           {/* Left: Branding & Role Selection */}
           <div className="md:w-1/2 p-12 bg-black/40 border-r border-white/5 flex flex-col justify-center">
             <div className="mb-12">
-              <h1 className="text-7xl font-bold gold-foil mb-2 tracking-tighter" style={{ fontFamily: "'Cormorant Garamond', serif" }}>FISCALOOK</h1>
+              <h1 className="text-7xl font-bold gold-foil mb-2 tracking-tighter" style={{ fontFamily: "'Cormorant Garamond', serif" }}>ReceiptTrac</h1>
               <div className="stitch-line" />
               <p className="gold-label opacity-60 mt-3">Executive Financial Oversight</p>
             </div>
@@ -917,7 +973,7 @@ const App = () => {
             <Coins className="text-black" size={32} />
           </div>
           <div>
-            <h1 className="text-4xl font-black tracking-[0.3em] gold-text italic" style={{ fontFamily: "'Playfair Display', serif" }}>FISCALOOK</h1>
+            <h1 className="text-4xl font-black tracking-[0.3em] gold-text italic" style={{ fontFamily: "'Playfair Display', serif" }}>ReceiptTrac</h1>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 bg-gold rounded-full animate-pulse shadow-[0_0_8px_#D4AF37]" />
@@ -1225,10 +1281,25 @@ const App = () => {
                 </div>
               </label>
             </div>
+            
+            <button 
+              onClick={() => setIsScanningBarcode(true)}
+              className="w-full mt-4 flex items-center justify-center gap-2 py-3 border border-gold/40 text-gold hover:bg-gold/10 transition-all font-bold tracking-widest text-[10px]"
+            >
+              SCAN BARCODE
+            </button>
+
             {role === "PERSONAL" && (
               <p className="gold-label opacity-40 mt-6 text-center gold-pulse">
                 Direct Sync to Director's Vault Active
               </p>
+            )}
+            
+            {isScanningBarcode && (
+              <BarcodeScanner 
+                onScanResult={handleBarcodeScan}
+                onClose={() => setIsScanningBarcode(false)}
+              />
             )}
           </div>
 

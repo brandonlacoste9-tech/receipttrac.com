@@ -29,7 +29,7 @@ const PORT = process.env.PORT || 5001;
 
 // Biometric Session Management
 app.use(session({
-  secret: process.env.JWT_SECRET || 'fiscalook-vault-secret',
+  secret: process.env.JWT_SECRET || 'receipttrac-vault-secret',
   resave: false,
   saveUninitialized: false,
   cookie: { secure: false, maxAge: 60000 * 5 } // 5 minutes for challenge
@@ -44,7 +44,7 @@ app.use(express.json({ limit: '10mb' }));
 
 // Health Check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', service: 'FISCALOOK API' });
+  res.json({ status: 'ok', service: 'ReceiptTrac API' });
 });
 
 // ============================================
@@ -96,7 +96,7 @@ app.post('/api/auth/biometric/register-options', authenticateToken, async (req, 
     }
 
     const options = await generateRegistrationOptions({
-      rpName: 'FISCALOOK Vault',
+      rpName: 'ReceiptTrac Vault',
       rpID: RP_ID,
       userID: new Uint8Array(Buffer.from(user.id)),
       userName: user.email,
@@ -450,7 +450,7 @@ app.post('/api/receipts/scan', authenticateToken, async (req, res) => {
   const { imageBase64, region, vault_id } = req.body;
   if (!imageBase64) return res.status(400).json({ error: 'No image provided' });
 
-  console.log(`🏛️  Initiating FISCALOOK Sovereign Audit for ${region} Protocol...`);
+  console.log(`🏛️  Initiating ReceiptTrac Sovereign Audit for ${region} Protocol...`);
 
   try {
     if (vault_id) {
@@ -472,8 +472,8 @@ app.post('/api/receipts/scan', authenticateToken, async (req, res) => {
     try {
       const response = await ollama.generate({
         model: 'moondream', // High-speed local vision model
-        prompt: `Audit this document for FISCALOOK. Perform precise extraction for: STORE_NAME, TOTAL_AMOUNT, SUBTOTAL, TAX_GST, TAX_QST, TAX_HST, TAX_USA, DATE, CURRENCY, CATEGORY. 
-                 Identify jurisdictional taxes with 100% accuracy via the FISCALOOK engine. 
+        prompt: `Audit this document for ReceiptTrac. Perform precise extraction for: STORE_NAME, TOTAL_AMOUNT, SUBTOTAL, TAX_GST, TAX_QST, TAX_HST, TAX_USA, DATE, CURRENCY, CATEGORY. 
+                 Identify jurisdictional taxes with 100% accuracy via the ReceiptTrac engine. 
                  Return ONLY a JSON object. Ensure numeric values are numbers, not strings.
                  If a tax is not present, use 0.
                  Format: { "store_name": "", "total_amount": 0.0, "subtotal": 0.0, "tax_gst": 0.0, "tax_qst_pst": 0.0, "tax_hst": 0.0, "tax_usa": 0.0, "currency": "CAD", "category": "", "items": [{"name": "", "price": 0.0}] }`,
@@ -617,6 +617,38 @@ app.get('/api/analytics/predictive', authenticateToken, requireSecureSession, as
   }
 });
 
+app.post('/api/receipts/barcode', authenticateToken, async (req, res) => {
+  const { barcode, region, vault_id } = req.body;
+  if (!barcode) return res.status(400).json({ error: 'Barcode required' });
+
+  try {
+    // Generate a mock receipt from barcode
+    const newReceipt = await prisma.receipt.create({
+      data: {
+        user_id: req.user.id,
+        vault_id: vault_id || null,
+        region: region || 'CAN_ON',
+        store_name: `Barcode Store #${barcode.substring(0, 4)}`,
+        category: 'Supplies',
+        currency: region === 'USA' ? 'USD' : 'CAD',
+        subtotal: 45.00,
+        tax_gst: 2.25,
+        tax_qst_pst: 0,
+        tax_hst: 0,
+        tax_usa: region === 'USA' ? 3.50 : 0,
+        total_amount: region === 'USA' ? 48.50 : 47.25,
+        raw_text: `Mock parsed from barcode: ${barcode}`,
+        image_url: null
+      }
+    });
+
+    res.json(newReceipt);
+  } catch (err) {
+    console.error('Barcode error', err);
+    res.status(500).json({ error: 'Failed to process barcode' });
+  }
+});
+
 // ============================================
 // XLSX EXPORT — Professional Excel Workbook
 // ============================================
@@ -717,5 +749,5 @@ app.get('/api/receipts/export', authenticateToken, async (req, res) => {
 
 
 app.listen(PORT, () => {
-  console.log(`🏛️ FISCALOOK Backend running on port ${PORT}`);
+  console.log(`🏛️ ReceiptTrac Backend running on port ${PORT}`);
 });
