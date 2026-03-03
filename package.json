@@ -1,0 +1,26 @@
+{
+  "name": "receipttrac.com",
+  "version": "1.0.0",
+  "description": "Build \"ReceiptTrac,\" an elite, high-performance receipt tracking and financial intelligence web application designed for executives. The application must feature a highly premium \"Ferrari Red and Black Leather\" aesthetic.",
+  "main": "index.js",
+  "scripts": {
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "build": "cd frontend && npm run build",
+    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brandonlacoste9-tech/receipttrac.com.git"
+  },
+  "keywords": ["receipttrac", "financial-intelligence", "receipt-tracking"],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/brandonlacoste9-tech/receipttrac.com/issues"
+  },
+  "homepage": "https://github.com/brandonlacoste9-tech/receipttrac.com#readme"
+}

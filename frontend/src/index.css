@@ -1,0 +1,356 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===================================
+   RECEIPTTRAC FERRARI RED & BLACK LEATHER DESIGN SYSTEM
+   =================================== */
+
+:root {
+  /* Color Palette */
+  --ferrari-red: #ff2800;
+  --ferrari-red-dark: #cc2000;
+  --deep-black: #0a0a0a;
+  --leather-grey: #151515;
+  --off-white: #e0e0e0;
+  --leather-brown: #1a1612;
+  
+  /* Typography */
+  --font-outfit: 'Outfit', sans-serif;
+  --font-inter: 'Inter', sans-serif;
+  --font-cormorant: 'Cormorant Garamond', serif;
+  
+  /* Spacing & Sizes */
+  --card-padding: 2rem;
+  --border-radius: 8px;
+  
+  /* Effects */
+  --glow-ferrari: 0 0 20px rgba(255, 40, 0, 0.5);
+  --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+  --shadow-elevated: 0 8px 24px rgba(0, 0, 0, 0.8);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-inter);
+  background-color: var(--deep-black);
+  color: var(--off-white);
+  min-height: 100vh;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* ===================================
+   LEATHER TEXTURE & STITCHED BORDERS
+   =================================== */
+
+.leather-card {
+  background: linear-gradient(135deg, var(--leather-grey) 0%, var(--leather-brown) 100%);
+  border: 1px dashed rgba(255, 40, 0, 0.35);
+  border-radius: var(--border-radius);
+  padding: var(--card-padding);
+  position: relative;
+  box-shadow: var(--shadow-inset), var(--shadow-elevated);
+  transition: all 0.3s ease;
+}
+
+.leather-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.03) 2px,
+      rgba(0, 0, 0, 0.03) 4px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.03) 2px,
+      rgba(0, 0, 0, 0.03) 4px
+    );
+  pointer-events: none;
+  border-radius: var(--border-radius);
+  opacity: 0.5;
+}
+
+.leather-card:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: var(--shadow-inset), var(--glow-ferrari), var(--shadow-elevated);
+  border-color: rgba(255, 40, 0, 0.6);
+}
+
+/* Stitched border utility */
+.stitched-border {
+  border: 1px dashed rgba(255, 40, 0, 0.35);
+  position: relative;
+}
+
+.stitched-border-heavy {
+  border: 2px dashed rgba(255, 40, 0, 0.5);
+}
+
+/* ===================================
+   TYPOGRAPHY SYSTEM
+   =================================== */
+
+h1, h2, h3 {
+  font-family: var(--font-cormorant);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+h1 {
+  font-size: 3.5rem;
+  background: linear-gradient(135deg, var(--ferrari-red) 0%, var(--ferrari-red-dark) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 30px rgba(255, 40, 0, 0.3);
+}
+
+h2 {
+  font-size: 2.5rem;
+  color: var(--off-white);
+}
+
+h3 {
+  font-size: 1.75rem;
+  color: var(--off-white);
+}
+
+.metric-label {
+  font-family: var(--font-outfit);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(224, 224, 224, 0.6);
+}
+
+.metric-value {
+  font-family: var(--font-outfit);
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--ferrari-red);
+  text-shadow: var(--glow-ferrari);
+}
+
+/* ===================================
+   BUTTON SYSTEM
+   =================================== */
+
+.btn-ferrari {
+  background: linear-gradient(135deg, var(--ferrari-red) 0%, var(--ferrari-red-dark) 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  font-family: var(--font-outfit);
+  font-weight: 600;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-elevated);
+}
+
+.btn-ferrari::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn-ferrari:hover {
+  transform: scale(1.05);
+  box-shadow: var(--glow-ferrari), var(--shadow-elevated);
+}
+
+.btn-ferrari:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.btn-ferrari:active {
+  transform: scale(0.98);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ferrari-red);
+  border: 2px solid var(--ferrari-red);
+  padding: 0.875rem 1.75rem;
+  font-family: var(--font-outfit);
+  font-weight: 600;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-ghost:hover {
+  background: var(--ferrari-red);
+  color: white;
+  box-shadow: var(--glow-ferrari);
+  transform: scale(1.05);
+}
+
+/* ===================================
+   BOSS MODE / EXECUTIVE SUMMARY
+   =================================== */
+
+.boss-mode-btn {
+  background: var(--deep-black);
+  color: var(--ferrari-red);
+  border: 2px solid var(--ferrari-red);
+  padding: 1.25rem 3rem;
+  font-family: var(--font-cormorant);
+  font-weight: 700;
+  font-size: 1.5rem;
+  letter-spacing: 0.05em;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: var(--shadow-elevated), inset 0 0 20px rgba(255, 40, 0, 0.1);
+}
+
+.boss-mode-btn:hover {
+  background: linear-gradient(135deg, var(--ferrari-red-dark) 0%, var(--ferrari-red) 100%);
+  color: white;
+  transform: scale(1.08);
+  box-shadow: 0 0 40px rgba(255, 40, 0, 0.8), var(--shadow-elevated);
+  border-color: transparent;
+}
+
+/* ===================================
+   CARDS & CONTAINERS
+   =================================== */
+
+.vault-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.metric-card {
+  background: linear-gradient(135deg, var(--leather-grey) 0%, var(--leather-brown) 100%);
+  border: 1px dashed rgba(255, 40, 0, 0.35);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--glow-ferrari), var(--shadow-elevated);
+  border-color: rgba(255, 40, 0, 0.7);
+}
+
+/* ===================================
+   UPLOAD ZONE / RECEIPT ENGINE
+   =================================== */
+
+.upload-zone {
+  border: 2px dashed rgba(255, 40, 0, 0.4);
+  border-radius: var(--border-radius);
+  padding: 3rem;
+  text-align: center;
+  background: rgba(21, 21, 21, 0.5);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.upload-zone:hover,
+.upload-zone.drag-active {
+  border-color: var(--ferrari-red);
+  background: rgba(255, 40, 0, 0.05);
+  box-shadow: var(--glow-ferrari);
+  transform: scale(1.02);
+}
+
+/* ===================================
+   UTILITY CLASSES
+   =================================== */
+
+.text-ferrari {
+  color: var(--ferrari-red);
+}
+
+.bg-deep-black {
+  background-color: var(--deep-black);
+}
+
+.bg-leather {
+  background: linear-gradient(135deg, var(--leather-grey) 0%, var(--leather-brown) 100%);
+}
+
+.glow-ferrari {
+  box-shadow: var(--glow-ferrari);
+}
+
+.shadow-elevated {
+  box-shadow: var(--shadow-elevated);
+}
+
+/* ===================================
+   ANIMATIONS
+   =================================== */
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(255, 40, 0, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(255, 40, 0, 0.8);
+  }
+}
+
+.pulse-ferrari {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.6s ease-out;
+}
