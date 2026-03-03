@@ -9,7 +9,7 @@
   --gold-glow: rgba(255, 40, 0, 0.2);
   --text-main: #e0e0e0;
   --text-dim: #777777;
-  --leather-grain: url("data:image/svg+xml,%3Csvg viewBox='0 0 250 250' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.12' style='mix-blend-mode: multiply;'/%3E%3C/svg%3E");
+  --leather-texture: url("https://www.transparenttextures.com/patterns/leather.png");
 }
 
 * {
@@ -27,7 +27,8 @@ body {
   background-image: 
     radial-gradient(circle at 0% 0%, rgba(255, 40, 0, 0.05) 0%, transparent 50%),
     radial-gradient(circle at 100% 100%, rgba(255, 40, 0, 0.05) 0%, transparent 50%),
-    var(--leather-grain);
+    var(--leather-texture);
+  background-size: auto, auto, 300px;
   background-attachment: fixed;
 }
 
@@ -51,80 +52,52 @@ body {
   background: linear-gradient(to bottom, #ff2800, #b30000);
 }
 
-/* Base Utility for the Binder Feel & Premium Glassmorphism */
+/* Base Utility for the Binder Feel & Premium Skeuomorphism */
 .luxury-card, .leather-card {
-  background-color: #0c0c0c; /* Deep black base */
+  background-color: #161616; /* Base leather color */
   background-image: 
-    var(--leather-grain),
-    linear-gradient(to bottom right, rgba(20,20,20,0.8), rgba(0,0,0,0.95));
-  background-blend-mode: multiply;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(0, 0, 0, 0.9);
-  border-top-color: rgba(255, 255, 255, 0.05); /* Very subtle top highlight like the wallet edge */
-  border-bottom-color: #000;
-  border-radius: 12px;
+    linear-gradient(rgba(20, 20, 20, 0.85), rgba(10, 10, 10, 0.95)),
+    var(--leather-texture);
+  background-size: auto, 300px;
+  border: 2px solid #242424; /* Firm edge rim to separate from background */
+  border-top-color: #333333; /* Top light bounce */
+  border-radius: 16px;
   padding: 2rem;
   box-shadow: 
-    0 25px 50px -12px rgba(0, 0, 0, 1), 
-    0 0 0 1px rgba(0,0,0,1) inset, 
-    inset 0 10px 20px rgba(255, 255, 255, 0.02), /* gentle lighting on leather */
-    inset 0 -15px 30px rgba(0, 0, 0, 0.9); 
+    0 20px 40px rgba(0, 0, 0, 0.8), /* Heavy physical drop shadow */
+    inset 0 0 60px rgba(0, 0, 0, 0.8), /* Center vignette / pooling shadow */
+    inset 0 1px 1px rgba(255, 255, 255, 0.05); /* Inner lip highlight */
   position: relative;
   transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
   overflow: hidden;
 }
 
-/* Red Leather Stitching — Embroidered Thread Effect */
-.luxury-card::after, .leather-card::after {
+/* Red Leather Stitching — Kaltrac Style Embroidered Thread Effect */
+.luxury-card::before {
   content: '';
   position: absolute;
   inset: 8px;
-  border: 2px dashed rgba(220, 20, 20, 0.9); /* Bold, vivid red thread */
+  border: 1px dashed #d81b1b; /* Bold red thread */
   border-radius: 10px;
+  opacity: 0.8;
   pointer-events: none;
-  opacity: 1;
-  /* Deep debossing to simulate the thread being pulled into the leather */
+  /* Deep debossing shadow below the thread */
   box-shadow: 
-    0 0 0 1px rgba(0,0,0,0.8), 
-    inset 0 0 0 1px rgba(0,0,0,0.8),
-    0 1px 1px rgba(255,255,255,0.05); /* Highlight below the trench */
-}
-
-.luxury-card::before, .leather-card::before {
-  content: '';
-  position: absolute;
-  inset: 14px;
-  border: 1.5px dashed rgba(180, 10, 10, 0.6); /* Inner, slightly darker thread */
-  border-radius: 6px;
-  pointer-events: none;
+    inset 0 1px 2px rgba(0,0,0,0.9),
+    0 1px 0 rgba(255,255,255,0.05);
   z-index: 1;
 }
 
-/* Subtle glossy reflection */
 .luxury-card::after, .leather-card::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: -100%;
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(
-    to right,
-    rgba(255,255,255,0) 0%,
-    rgba(255, 40, 0, 0.03) 50%,
-    rgba(255,255,255,0) 100%
-  );
-  transform: skewX(-25deg);
-  transition: 0.7s;
-  z-index: 2;
+  inset: 12px;
+  border: 1px dashed #b31414; /* Inner thread, slightly darker */
+  border-radius: 8px;
+  opacity: 0.5;
   pointer-events: none;
+  transition: all 0.4s;
 }
-
-.luxury-card:hover::after, .leather-card:hover::after {
-  left: 200%;
-}
-
 /* High-tech Vault Grid Background */
 .vault-grid {
   position: fixed;
@@ -546,9 +519,11 @@ input:focus, button:focus-visible {
 .logo-vault {
   width: 120px;
   height: 120px;
-  background-color: #080808;
-  background-image: var(--leather-grain), linear-gradient(135deg, #1a1a1a 0%, #050505 100%); /* Deep charcoal / black carbon look */
-  background-blend-mode: multiply;
+  background-color: #161616;
+  background-image: 
+    linear-gradient(135deg, rgba(26,26,26,0.9) 0%, rgba(5,5,5,0.95) 100%),
+    var(--leather-texture);
+  background-size: auto, 300px;
   border-radius: 12px;
   position: relative;
   box-shadow: 
@@ -557,7 +532,7 @@ input:focus, button:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 2px solid #242424;
   transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
@@ -611,19 +586,19 @@ input:focus, button:focus-visible {
 }
 
 .vault-entrance-card {
-  background-color: #050505;
+  background-color: #161616;
   background-image: 
-    var(--leather-grain),
-    linear-gradient(to bottom, transparent, rgba(0,0,0,0.8));
-  background-blend-mode: multiply;
+    linear-gradient(to bottom, rgba(20,20,20,0.85), rgba(0,0,0,0.95)),
+    var(--leather-texture);
+  background-size: auto, 300px;
   padding: 4rem;
-  border-radius: 12px;
-  border: 1px solid #111;
-  border-top-color: rgba(255, 40, 0, 0.2);
+  border-radius: 16px;
+  border: 2px solid #242424;
+  border-top-color: #333333;
   box-shadow: 
-    0 50px 100px -20px rgba(0,0,0,1),
-    0 30px 60px -30px rgba(255, 40, 0, 0.15),
-    inset 0 2px 20px rgba(0,0,0,0.8);
+    0 40px 100px rgba(0,0,0,1),
+    inset 0 0 60px rgba(0,0,0,0.8),
+    inset 0 1px 0 rgba(255,255,255,0.05);
   position: relative;
   overflow: hidden;
 }
