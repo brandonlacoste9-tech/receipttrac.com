@@ -1050,12 +1050,12 @@ const App = () => {
   }
 
   return (
-    <div className="min-h-screen bg-transparent relative overflow-hidden flex flex-col items-center">
-      <div className="vault-grid w-full h-full absolute inset-0" />
+    <div className="min-h-screen w-full bg-transparent relative overflow-hidden flex flex-col">
+      <div className="vault-grid w-full h-full absolute inset-0 pointer-events-none" />
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="p-4 md:p-8 w-full max-w-[1400px] relative z-10"
+        className="flex-1 w-full max-w-[1400px] mx-auto p-4 md:p-8 relative z-10"
       >
       {/* Sovereign Laser Scan Overlay */}
       <AnimatePresence>
