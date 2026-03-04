@@ -5,7 +5,7 @@ import {
   ChevronUp, Globe, DollarSign, Wallet, ArrowRightLeft, 
   LogOut, Coins, Zap, Filter, Download, FileText, ChevronRight,
   Fingerprint, Key, ShieldCheck, Lock,
-  BrainCircuit, Quote, Activity, RefreshCw, Eye, EyeOff
+  BrainCircuit, Quote, Activity, RefreshCw, Eye, EyeOff, Copy
 } from 'lucide-react';
 import { 
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip, 
@@ -1679,37 +1679,57 @@ const App = () => {
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="leather-card"
+              className="leather-card relative overflow-hidden"
             >
-              <h3 className="gold-label mb-6 flex justify-between">
-                <span className="gold-heading uppercase tracking-widest">{t('EXECUTIVE_BOARD')}</span>
-                <span className="text-white/20">{currentVault.name}</span>
-              </h3>
+              <div className="absolute top-0 right-0 w-24 h-24 bg-red-500/5 rotate-45 translate-x-12 -translate-y-12" />
               
-              <div className="space-y-4">
+              <div className="flex justify-between items-start mb-8">
+                <div>
+                  <h3 className="gold-heading uppercase tracking-[0.2em] text-[10px] opacity-60 mb-1">{t('EXECUTIVE_BOARD')}</h3>
+                  <h2 className="text-xl font-bold gold-text tracking-tighter" style={{ fontFamily: "'Cormorant Garamond', serif" }}>{currentVault.name}</h2>
+                </div>
+                <button 
+                  onClick={() => {
+                    navigator.clipboard.writeText(currentVault.id);
+                    alert("Vault ID copied to clipboard for secondary executive onboarding.");
+                  }}
+                  className="p-2 border border-white/5 hover:border-red-500/30 transition-all rounded text-white/20 hover:text-red-500 bg-white/5"
+                  title="Copy Institutional ID"
+                >
+                  <Copy size={12} />
+                </button>
+              </div>
+              
+              <div className="space-y-3">
                 {currentVault.members?.map(m => (
-                  <div key={m.user_id} className="flex justify-between items-center p-3 bg-white/5 border border-white/5 group hover:border-red-500/20 transition-all">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 font-bold text-xs border border-red-500/20">
-                        {m.user?.name?.charAt(0) || m.user?.email?.charAt(0)}
+                  <div key={m.user_id} className="flex justify-between items-center p-4 bg-gradient-to-r from-white/[0.03] to-transparent border-l-2 border-red-500/40 hover:border-red-500 transition-all group">
+                    <div className="flex items-center gap-4">
+                      <div className="relative">
+                        <div className="w-10 h-10 rounded-full bg-black border border-white/10 flex items-center justify-center text-red-500 font-black text-sm group-hover:shadow-[0_0_15px_rgba(255,40,0,0.3)] transition-all">
+                          {m.user?.name?.charAt(0) || m.user?.email?.charAt(0)}
+                        </div>
+                        <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-[#0a0a0a] rounded-full" />
                       </div>
                       <div>
-                        <p className="text-[11px] font-bold text-white/80">{m.user?.name || m.user?.email}</p>
-                        <p className="text-[9px] gold-label opacity-40 uppercase">{m.role}</p>
+                        <p className="text-[12px] font-bold text-white group-hover:text-red-500 transition-colors uppercase tracking-tight">{m.user?.name || m.user?.email}</p>
+                        <p className="text-[8px] gold-label opacity-40 uppercase tracking-[0.2em]">{m.role}</p>
                       </div>
                     </div>
+                    {m.role === 'OWNER' && <ShieldCheck size={14} className="text-red-500/40" />}
                   </div>
                 ))}
               </div>
 
-              <div className="mt-8">
+              <div className="mt-10 pt-6 border-t border-white/5">
                 <button 
                   onClick={() => setIsInviteModalOpen(true)}
-                  className="w-full py-3 px-4 gold-hardware-small text-[10px] flex items-center justify-center gap-2 group"
+                  className="w-full py-4 px-4 gold-hardware-small text-[10px] flex items-center justify-center gap-3 group relative overflow-hidden"
                 >
-                  <Plus size={14} className="group-hover:rotate-90 transition-transform" />
-                  {t('INVITE_EXECUTIVE')}
+                  <div className="absolute inset-0 bg-white/5 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                  <Plus size={16} className="group-hover:rotate-90 transition-transform relative z-10" />
+                  <span className="relative z-10 font-black tracking-[0.2em]">{t('INVITE_EXECUTIVE')}</span>
                 </button>
+                <p className="text-[8px] gold-label opacity-20 text-center mt-4 tracking-widest uppercase italic">Secure Multi-Executive Access Active</p>
               </div>
             </motion.div>
           )}

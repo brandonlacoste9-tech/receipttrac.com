@@ -12,13 +12,22 @@ const PROTOCOLS = {
       { id: 'TVQ', rate: 0.09975, label: 'TVQ (9.975%)' }
     ],
     calculate: (total) => {
-      // In Quebec, TVQ is calculated on (Subtotal + TPS) logic in some contexts, 
-      // but standard consumer totals follow: Total = Subtotal * 1.14975
-      const subtotal = total / 1.14975;
-      const tps = subtotal * 0.05;
-      const tvq = subtotal * 0.09975;
+      // ReceiptTrac Sovereign Precision: 
+      // Quebec Jurisdictional Multiplier: 1.14975
+      // Total = Subtotal * (1 + GST + QST)
+      // Recalculating subtotal from total with float guard.
+      const subtotal = Math.round((total / 1.14975) * 100) / 100;
+      
+      // Precision Rounding (Revenu Québec Compliance)
+      const tps = Math.round((subtotal * 0.05) * 100) / 100;
+      const tvq = Math.round((subtotal * 0.09975) * 100) / 100;
+      
+      // Verification Hash: If sum doesn't match total, adjust subtotal as balancing entry.
+      const diff = total - (subtotal + tps + tvq);
+      const finalSubtotal = Number((subtotal + diff).toFixed(2));
+      
       return {
-        subtotal: Number(subtotal.toFixed(2)),
+        subtotal: finalSubtotal,
         tax_gst: Number(tps.toFixed(2)),
         tax_qst_pst: Number(tvq.toFixed(2)),
         tax_hst: 0,
