@@ -174,6 +174,7 @@ const App = () => {
 
   // Category Filter State
   const [activeCategory, setActiveCategory] = useState(null);
+  const [complianceStamps, setComplianceStamps] = useState(new Set());
 
   useEffect(() => {
     terminalEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -289,6 +290,15 @@ const App = () => {
     } catch (err) {
       console.error('Failed to fetch vaults:', err);
     }
+  };
+
+  const enforceCompliance = (id) => {
+    setComplianceStamps(prev => new Set([...prev, id]));
+    setCommandLogs(prev => [
+      ...prev, 
+      { type: 'sys', msg: `EXECUTING COMPLIANCE_ENFORCEMENT ON AUDIT:${id.substring(0,8)}...` },
+      { type: 'success', msg: 'JURISDICTIONAL INTEGRITY SEAL APPLIED.' }
+    ]);
   };
 
   const handleDeleteReceipt = async (id, e) => {
@@ -2001,12 +2011,26 @@ const App = () => {
                                         </div>
 
                                         <div className="flex gap-4">
-                                          <button className="gold-hardware-small py-3 px-6 flex-1 text-[9px]">{t('ENFORCE COMPLIANCE')}</button>
+                                          <button 
+                                            onClick={() => enforceCompliance(r.id)}
+                                            className="gold-hardware-small py-3 px-6 flex-1 text-[9px] relative overflow-hidden group"
+                                          >
+                                             <span className="relative z-10 transition-transform duration-300 group-hover:scale-110 block">{t('ENFORCE COMPLIANCE')}</span>
+                                          </button>
                                           <button
                                             onClick={(e) => handleDeleteReceipt(r.id, e)}
                                             className="flex-1 p-2 leather-card border-none hover:bg-rose-950/20 text-rose-500 text-[9px] uppercase font-bold tracking-widest transition-colors"
                                           >{t('DE-AUTHORIZE')}</button>
                                         </div>
+                                        
+                                        {complianceStamps.has(r.id) && (
+                                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-50">
+                                            <div className="success-stamp active border-[12px] rotate-[-12deg] opacity-70 p-6 flex flex-col items-center">
+                                              <span className="text-4xl font-black">{t('AUTHORIZED')}</span>
+                                              <span className="text-[10px] tracking-[0.5em]">{new Date().toISOString().split('T')[0]}</span>
+                                            </div>
+                                          </div>
+                                        )}
                                       </div>
                                     </div>
                                   </motion.div>
