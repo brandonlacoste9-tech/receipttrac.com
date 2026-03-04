@@ -614,28 +614,75 @@ input:focus, button:focus-visible {
   border-radius: 8px 0 0 8px;
 }
 
-.vault-entrance-card {
-  background-color: #161616;
-  background-image: 
-    linear-gradient(to bottom, rgba(20,20,20,0.85), rgba(0,0,0,0.95)),
-    var(--leather-texture);
-  background-size: auto, 300px;
-  padding: 4rem;
-  border-radius: 16px;
-  border: 2px solid #242424;
-  border-top-color: #333333;
-  box-shadow: 
-    0 40px 100px rgba(0,0,0,1),
-    inset 0 0 60px rgba(0,0,0,0.8),
-    inset 0 1px 0 rgba(255,255,255,0.05);
+/* NullClaw-Inspired Sovereign Aesthetic */
+.sovereign-terminal {
+  font-family: 'Fira Code', 'SF Mono', monospace;
+  background: #020202;
+  border-left: 2px solid #ff2800;
+  box-shadow: inset 0 0 40px rgba(255, 40, 0, 0.05);
   position: relative;
   overflow: hidden;
 }
 
-.vault-entrance-card::before {
-  content: '';
+.sovereign-terminal::after {
+  content: " ";
+  display: block;
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: radial-gradient(circle at top right, rgba(255,40,0,0.05), transparent 60%);
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  z-index: 2;
+  background-size: 100% 2px, 3px 100%;
   pointer-events: none;
+}
+
+.scanline-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(to bottom, rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+  background-size: 100% 4px;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.15;
+}
+
+.crt-flicker {
+  animation: crt-flicker 0.15s infinite;
+}
+
+@keyframes crt-flicker {
+  0% { opacity: 0.97; }
+  5% { opacity: 0.95; }
+  10% { opacity: 0.9; }
+  15% { opacity: 0.95; }
+  30% { opacity: 0.98; }
+  45% { opacity: 0.9; }
+  50% { opacity: 0.95; }
+  55% { opacity: 0.98; }
+  70% { opacity: 0.95; }
+  85% { opacity: 0.9; }
+  90% { opacity: 0.98; }
+  100% { opacity: 0.99; }
+}
+
+.amber-alert {
+  color: #ff8c00;
+  text-shadow: 0 0 10px rgba(255, 140, 0, 0.4);
+  font-family: 'Fira Code', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+}
+
+.sovereign-mono {
+  font-family: 'Fira Code', monospace;
+  font-weight: 700;
+  color: #ff2800;
+  text-shadow: 0 0 15px rgba(255, 40, 0, 0.3);
+}
+
+.leather-entrance {
+  background-image: 
+    linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)),
+    var(--leather-texture);
+  border: 1px solid rgba(255, 40, 0, 0.1);
+  box-shadow: 0 50px 100px rgba(0,0,0,0.9);
 }

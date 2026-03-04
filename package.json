@@ -5,5 +5,8 @@
     "dev:frontend": "cd frontend && npm run dev",
     "dev:backend": "cd backend && node server.js",
     "install:all": "cd frontend && npm install && cd ../backend && npm install"
+  },
+  "dependencies": {
+    "playwright": "^1.58.2"
   }
 }
