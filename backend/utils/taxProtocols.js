@@ -39,13 +39,14 @@ const PROTOCOLS = {
     currency: 'CAD',
     locale: 'en-CA',
     taxes: [
-      { id: 'HST', rate: 0.13, label: 'HST (13%)' } // Defaulting to ON/Atlantic average
+      { id: 'HST', rate: 0.13, label: 'HST (13%)' } 
     ],
     calculate: (total) => {
-      const subtotal = total / 1.13;
-      const hst = total - subtotal;
+      const subtotal = Math.round((total / 1.13) * 100) / 100;
+      const hst = Math.round((subtotal * 0.13) * 100) / 100;
+      const diff = total - (subtotal + hst);
       return {
-        subtotal: Number(subtotal.toFixed(2)),
+        subtotal: Number((subtotal + diff).toFixed(2)),
         tax_hst: Number(hst.toFixed(2)),
         tax_gst: 0,
         tax_qst_pst: 0,
@@ -60,10 +61,11 @@ const PROTOCOLS = {
       { id: 'SALES_TAX', rate: 0.08, label: 'Sales Tax (Est.)' }
     ],
     calculate: (total) => {
-      const subtotal = total / 1.08;
-      const salesTax = total - subtotal;
+      const subtotal = Math.round((total / 1.08) * 100) / 100;
+      const salesTax = Math.round((subtotal * 0.08) * 100) / 100;
+      const diff = total - (subtotal + salesTax);
       return {
-        subtotal: Number(subtotal.toFixed(2)),
+        subtotal: Number((subtotal + diff).toFixed(2)),
         tax_usa: Number(salesTax.toFixed(2)),
         tax_gst: 0,
         tax_qst_pst: 0,

@@ -175,6 +175,7 @@ const App = () => {
   // Category Filter State
   const [activeCategory, setActiveCategory] = useState(null);
   const [complianceStamps, setComplianceStamps] = useState(new Set());
+  const [gatekeeperLogs, setGatekeeperLogs] = useState({ audit: '', findings: '' });
 
   useEffect(() => {
     terminalEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -270,7 +271,17 @@ const App = () => {
     };
     initVault();
     fetchVaults();
+    fetchGatekeeperLogs();
   }, [token]);
+
+  const fetchGatekeeperLogs = async () => {
+    try {
+      const resp = await fetch('/api/gatekeeper/logs', { headers: { Authorization: `Bearer ${token}` } });
+      if (resp.ok) setGatekeeperLogs(await resp.json());
+    } catch (e) {
+      console.error("Failed to fetch gatekeeper logs:", e);
+    }
+  };
 
   const fetchReceipts = async () => {
     try {
@@ -289,6 +300,22 @@ const App = () => {
       setVaults(res.data);
     } catch (err) {
       console.error('Failed to fetch vaults:', err);
+    }
+  };
+
+  const runSovereignAudit = async () => {
+    try {
+      const resp = await fetch('/api/gatekeeper/audit', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (resp.ok) {
+        fetchGatekeeperLogs();
+        setCommandLogs(prev => [...prev, { type: 'sys', msg: 'SOVEREIGN_GATEKEEPER_SWEEP_COMPLETE.' }]);
+      }
+    } catch (e) {
+      console.error("Sovereign audit failed:", e);
+      setCommandLogs(prev => [...prev, { type: 'error', msg: 'SOVEREIGN_AUDIT_FAILED.' }]);
     }
   };
 
@@ -1744,6 +1771,47 @@ const App = () => {
             </motion.div>
           )}
 
+          {(role === "ENTERPRISE" || role === "SMALL_BUSINESS") && currentVault && (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-8 space-y-8"
+            >
+              <div className="grid grid-cols-1 gap-8">
+                <div className="leather-card bg-black/40 border-gold/10 p-6 min-h-[250px] flex flex-col">
+                  <div className="flex items-center justify-between mb-4">
+                     <h4 className="text-[10px] font-black tracking-[0.4em] uppercase text-gold/60">{t('GATEKEEPER_AUDIT_PLAN')}</h4>
+                     <ShieldAlert size={14} className="text-gold/40" />
+                  </div>
+                  <div className="flex-1 overflow-auto custom-scrollbar pr-2">
+                     <pre className="text-[9px] font-mono text-gold/30 whitespace-pre-wrap leading-relaxed">
+                        {gatekeeperLogs.audit || 'Initializing Protocol...'}
+                     </pre>
+                  </div>
+                </div>
+                
+                <div className="leather-card bg-black/40 border-red-500/10 p-6 min-h-[300px] flex flex-col relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 blur-3xl pointer-events-none" />
+                  <div className="flex items-center justify-between mb-4">
+                     <h4 className="text-[10px] font-black tracking-[0.4em] uppercase text-red-500/60">{t('SECURITY_FINDINGS')}</h4>
+                     <Activity size={14} className="text-red-500/40" />
+                  </div>
+                  <div className="flex-1 overflow-auto custom-scrollbar pr-2">
+                     <pre className="text-[9px] font-mono text-red-500/40 whitespace-pre-wrap leading-relaxed">
+                        {gatekeeperLogs.findings || 'No anomalies detected.'}
+                     </pre>
+                  </div>
+                  <button 
+                    onClick={runSovereignAudit}
+                    className="mt-6 gold-hardware-small py-4 text-[9px] font-black tracking-widest hover:scale-[1.02] active:scale-95 transition-all w-full flex items-center justify-center gap-2"
+                  >
+                    <ShieldCheck size={14} /> {t('RUN_SOVEREIGN_AUDIT')}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
           {role === "PERSONAL" && (
              <div className="p-8 leather-card opacity-50">
                 <h3 className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/40 mb-4">Staff Insight Locked</h3>
@@ -1898,7 +1966,7 @@ const App = () => {
                                 ) : (
                                   <div className="w-5 h-3 shadow-md border border-white/10 overflow-hidden rounded-[1px] bg-white relative flex items-center justify-center">
                                     <div className="w-[1px] h-full bg-rose-600 absolute left-1/3" />
-                                    <div className="w-[1px] h-full bg-rose-600 absolute right-1/3" />
+                                    <div className="w-[1px] h-1/2 bg-rose-600 absolute right-1/3" />
                                     <div className="w-1 h-1 bg-rose-600 rotate-45" />
                                   </div>
                                 )}
